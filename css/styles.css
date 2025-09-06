@@ -11,3 +11,14 @@ a { color:var(--accent); text-decoration:none; }
 .tags { display:flex; flex-wrap:wrap; gap:10px; list-style:none; padding:0; }
 .tags li { background:var(--card); border:1px solid #30363d; padding:6px 10px; border-radius:999px; }
 .footer { padding:24px; text-align:center; color:var(--muted); }
+figure {
+  margin: 2em 0;
+  text-align: center;
+}
+
+figcaption {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: center;
+}
