@@ -12,13 +12,13 @@
    <h1>TLS 1.2 RSA Key Exchange Decryption</h1>
 
     <h3>Purpose</h3>
-    <p>This project tested the vulnerability of TLS 1.2 sessions using RSA key exchange. The goal was to show how a compromised private key allows attackers to decrypt captured traffic, even after the session has ended, due to the lack of forward secrecy.</p>
+    <p>This project tested the vulnerability of TLS 1.2 sessions using RSA key exchange. The goal was to show how a compromised private key allows attackers to decrypt captured traffic, even after the session has ended due to the lack of forward secrecy in RSA ciphers.</p>
 
     <h3>Methodology</h3>
-    <p>Three VMs were used: a client, an attacker, and an nginx webserver with a self-signed certificate. The server was restricted to RSA cipher suites under TLS 1.2. The client logged into a simple HTTPS form, while the attacker monitored traffic with tcpdump.</p>
+    <p>Three VMs were configured: a client, an attacker, and an nginx webserver with a self-signed certificate. The server was restricted to RSA cipher suites under TLS 1.2. The client logged into a simple HTTPS form hosted by the webserver, while the attacker monitored traffic with tcpdump.</p>
 
     <h3>Process</h3>
-    <p>Traffic was captured with tcpdump and saved as a <code>.pcap</code>. In Wireshark, filters confirmed TLS 1.2 with RSA. Importing the server’s private key enabled decryption of the ClientHello and subsequent packets.</p>
+    <p>Traffic was captured with tcpdump and saved as a <code>.pcap</code>. In Wireshark, HTTP filters confirmed TLS 1.2 with RSA. Importing the server’s private key into wireshark enabled decryption of the ClientHello and subsequent packets.</p>
 
     <h3>Result</h3>
     <p>The HTTP POST request, including plaintext username and password, was successfully recovered.</p>
