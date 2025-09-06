@@ -9,11 +9,43 @@
 <body>
   <header class="nav"><div class="brand"><a href="../index.html">← Portfolio</a></div></header>
   <section class="section">
-    <h1>TLS 1.2 RSA Key Exchange Decryption</h1>
-    <p><strong>Context:</strong> Demonstrates weakness of TLS 1.2 when static RSA is used without forward secrecy.</p>
-    <p><strong>Process:</strong> Configured nginx TLS 1.2 + RSA; attacker captured traffic; Wireshark imported private key; decrypted POST credentials.</p>
-    <p><strong>Result:</strong> Full plaintext username/password recovered.</p>
-    <p><strong>Value:</strong> Shows protocol weakness, passive MITM, and packet forensics.</p>
+   <h1>TLS 1.2 RSA Key Exchange Decryption</h1>
+
+    <h3>Purpose</h3>
+    <p>This project explored the use of JA3 fingerprinting to detect man-in-the-middle attacks. My goal was to demonstrate that I could build and analyse an intercepted TLS environment, and use fingerprinting techniques to distinguish malicious traffic from normal sessions.</p>
+
+    <h3>Methodology</h3>
+    <p>I configured three virtual machines: a client, an attacker using Mitmproxy, and a webserver. This setup gave me control over both ends of the traffic flow and the ability to introduce and observe an active interception. I enabled the JA3 plugin in Wireshark to capture and hash TLS ClientHello messages.</p>
+
+    <h3>Process</h3>
+    <p>I first captured baseline traffic from the client’s browser connecting directly to the server. I then placed the attacker in the middle using Mitmproxy, repeated the connection, and captured that traffic. Both captures were analysed individually in Wireshark, where I noted the JA3 fingerprints for comparison.</p>
+<figure>
+  <img src="../assets/img/ServerHello.png" 
+       alt="Wireshark capture of TLS 1.2 handshake"
+       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+  <figcaption>Figure 1: TLS 1.2 handshake confirmed in Wireshark.</figcaption>
+  <img src="../assets/img/CapturedPost.png" 
+       alt="Wireshark capture of TLS 1.2 handshake"
+       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+  <figcaption>Figure 2: Encrypted POST packet found using HTTP filter.</figcaption>
+</figure>
+    <h3>Result</h3>
+    <p> The JA3 hash from the clean browser session was different from the hash produced when Mitmproxy intercepted the traffic. This confirmed that the handshake characteristics change in a detectable way when a MITM proxy is present. However, when searching for a hash match of the MITM proxy hash in JA3 hash databases, no matches were found, showing the need for hash databases to be continually updated. </p>
+    <figure>
+  <img src="../assets/img/PrivateKeyImport.png" 
+       alt="Wireshark showing decrypted POST request"
+       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+  <figcaption>Figure 3: The servers private key was imported into Wireshark</figcaption>
+</figure>
+    <figure>
+  <img src="../assets/img/DecryptedPost.png" 
+       alt="Wireshark showing decrypted POST request"
+       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+  <figcaption>Figure 4: Decrypted POST request showing recovered login credentials.</figcaption>
+</figure>
+    <h3>Value</h3>
+    <p>Demonstrates I can setup and configure a secure lab, capture analyse and decrypt traffic, and exploit weaknesses of TLS 1.2 when configured with RSA ciphers. </p>
+ 
   </section>
   <footer class="footer"><small>Designed & coded by me.</small></footer>
 </body>
