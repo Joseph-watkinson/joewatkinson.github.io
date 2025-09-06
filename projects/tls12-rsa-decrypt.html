@@ -10,9 +10,10 @@
   <header class="nav"><div class="brand"><a href="../index.html">← Portfolio</a></div></header>
   <section class="section">
     <h1>TLS 1.2 RSA Key Exchange Decryption</h1>
-    <p><strong>Context:</strong> Demonstrates weakness of TLS 1.2 when static RSA is used without forward secrecy.</p>
-    <p><strong>Process:</strong> Configured nginx TLS 1.2 + RSA; attacker captured traffic; Wireshark imported private key; decrypted POST credentials.</p>
-    <p><strong>Result:</strong> Full plaintext username/password recovered.</p>
+    <p><strong>Purpose:</strong> This project aimed to analyze the MITM attack resistance and vulnerability of key exchange mechanisms in TLS 1.2.The project was designed to demonstrate the critical vulnerability of TLS 1.2 still allowing the use of RSA key exchange mechanisms. The goal of this experiment was to decrypt a client username and password during a secure HTTPS session using Wireshark and the server's compromised private key. This scenario aimed to illustrate how TLS 1.2 sessions lacking forward secrecy can be compromised even if the session has ended.</p>
+    <p><strong>Methodology:</strong> Three Virtual Machines were configured, a "Client" desktop, an "Attacker" desktop and a webserver configured via Nginx. The webserver was configured to host a simple webpage and login form over TLS 1.2 using a self-signed certificate. For the purposes of the experiment, only RSA based cipher suites were enabled for the TLS 1.2 configuration. The Victim / client VM was solely used to connect to the webserver over a HTTPS enabled session and submit login details to the login form. The attacker VM was configured to sniff and capture the encrypted traffic of the client machine in an attempt to decrypt it. This was done using wireshark and Tcpdump. </p>
+    <p><strong>Porcess:</strong>The Attacker VM captured traffic with tcpdump configured to the webservers IP, while the client vm logged in via Firefox. The .pcap was imported into Wireshark, filtered for TLS/HTTP packets, confirming TLS 1.2 with RSA. Inspection of the ClientHello packet showed the encrypted session data from the client–server exchange.</p>
+    <p><strong>Result:</strong>The login request, including plaintext username and password, was successfully recovered.</p>
     <p><strong>Value:</strong> Shows protocol weakness, passive MITM, and packet forensics.</p>
   </section>
   <footer class="footer"><small>Designed & coded by me.</small></footer>
