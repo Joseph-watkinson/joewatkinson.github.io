@@ -17,8 +17,10 @@ figure {
 }
 
 figcaption {
-  margin-top: 8px;
+  margin: 8px auto 0 auto;
+  max-width: 80%;       /* caption text only spans 80% of page */
   font-size: 0.9rem;
   color: var(--muted);
   text-align: center;
+  font-style: italic;
 }
