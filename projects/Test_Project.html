@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TLS 1.2 RSA Key Exchange Decryption — Project</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+  <header class="nav"><div class="brand"><a href="../index.html">← Portfolio</a></div></header>
+  <section class="section">
+    <h1>TLS 1.2 RSA Key Exchange Decryption</h1>
+    <p><strong>Context:</strong> Demonstrates weakness of TLS 1.2 when static RSA is used without forward secrecy.</p>
+    <p><strong>Process:</strong> Configured nginx TLS 1.2 + RSA; attacker captured traffic; Wireshark imported private key; decrypted POST credentials.</p>
+    <p><strong>Result:</strong> Full plaintext username/password recovered.</p>
+    <p><strong>Value:</strong> Shows protocol weakness, passive MITM, and packet forensics.</p>
+  </section>
+  <footer class="footer"><small>Designed & coded by me.</small></footer>
+</body>
+</html>
