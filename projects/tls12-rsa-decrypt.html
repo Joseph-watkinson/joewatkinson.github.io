@@ -24,12 +24,10 @@
        alt="Wireshark capture of TLS 1.2 handshake"
        style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
   <figcaption>Figure 1: TLS 1.2 handshake confirmed in Wireshark.</figcaption>
-  <figure>
   <img src="../assets/img/CapturedPost.png" 
        alt="Wireshark capture of TLS 1.2 handshake"
        style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
   <figcaption>Figure 2: Encrypted POST packet found using HTTP filter.</figcaption>
-</figure>
 </figure>
     <h3>Result</h3>
     <p> Importing the server’s private key into wireshark enabled decryption of the ClientHello and subsequent packets.Subsiquently, the HTTP POST request, including plaintext username and password, was successfully recovered.</p>
