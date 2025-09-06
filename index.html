@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Joseph Watkinson — Cyber Security Portfolio</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="brand">Joseph Watkinson</div>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section id="about" class="section">
+    <h1>About</h1>
+    <p>Cyber Security graduate with hands-on experience in TLS analysis, MITM attack simulation, and network protocol testing.</p>
+  </section>
+
+  <section id="projects" class="section">
+    <h2>Projects</h2>
+    <div class="grid">
+      <a class="card" href="projects/tls12-rsa-decrypt.html">
+        <h3>TLS 1.2 RSA Key Exchange Decryption</h3>
+        <p>Passive MITM with server key → plaintext credentials.</p>
+      </a>
+    </div>
+  </section>
+
+  <section id="skills" class="section">
+    <h2>Skills</h2>
+    <ul class="tags">
+      <li>Wireshark</li><li>Python</li><li>Scapy</li><li>Nginx</li><li>VMware</li>
+    </ul>
+  </section>
+
+  <section id="contact" class="section">
+    <h2>Contact</h2>
+    <p>Email: <a href="mailto:your.email@example.com">your.email@example.com</a></p>
+    <p><a href="https://www.linkedin.com/in/yourprofile">LinkedIn</a> | <a href="https://github.com/yourgithub">GitHub</a></p>
+  </section>
+
+  <footer class="footer">
+    <small>© <span id="y"></span> Joseph Watkinson — Designed & coded by me.</small>
+    <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+  </footer>
+</body>
+</html>
