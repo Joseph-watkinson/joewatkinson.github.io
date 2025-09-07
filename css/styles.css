@@ -25,73 +25,36 @@ figcaption {
   font-style: italic;
 }
 /* Project card hover overlays */
-.card {
+
+.grid > a.card {
   position: relative;
+  display: block;
+  overflow: hidden;
   background: var(--card);
   border: 1px solid #30363d;
   border-radius: 12px;
   padding: 16px;
-  overflow: hidden;
   transition: transform 0.2s ease;
   text-decoration: none;
   color: var(--fg);
 }
 
-.card:hover {
+.grid > a.card:hover {
   transform: translateY(-4px);
 }
 
-.card-content {
-  position: relative;
-  z-index: 1;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 12px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  border-radius: 12px;
-}
-
-.card:hover .overlay {
-  opacity: 1;
-}
-
-.grid .card {
-  position: relative;
-  display: block;            
-  overflow: hidden;
-  background: var(--card);
-  border: 1px solid #30363d;
-  border-radius: 12px;
-  padding: 16px;
-  transition: transform 0.2s ease;
-  text-decoration: none;
-  color: var(--fg);
-}
-
-.grid .card:hover { transform: translateY(-4px); }
-
-.grid .card .card-content {
+.grid > a.card .card-content {
   position: relative;
   z-index: 1;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-.grid .card:hover .card-content {
-  opacity: 0.18;            
+.grid > a.card:hover .card-content {
+  opacity: 0.18;
   transform: scale(0.98);
 }
 
-.grid .card .overlay {
+.grid > a.card .overlay {
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -105,8 +68,10 @@ figcaption {
   color: #fff;
   opacity: 0;
   transition: opacity 0.25s ease;
-  pointer-events: none;    
+  pointer-events: none; /* keeps whole card clickable */
 }
 
-.grid .card:hover .overlay { opacity: 1; }
+.grid > a.card:hover .overlay {
+  opacity: 1;
+}
 
