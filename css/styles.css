@@ -64,3 +64,49 @@ figcaption {
 .card:hover .overlay {
   opacity: 1;
 }
+
+.grid .card {
+  position: relative;
+  display: block;            
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 16px;
+  transition: transform 0.2s ease;
+  text-decoration: none;
+  color: var(--fg);
+}
+
+.grid .card:hover { transform: translateY(-4px); }
+
+.grid .card .card-content {
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.grid .card:hover .card-content {
+  opacity: 0.18;            
+  transform: scale(0.98);
+}
+
+.grid .card .overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;    
+}
+
+.grid .card:hover .overlay { opacity: 1; }
+
