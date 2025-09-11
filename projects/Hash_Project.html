@@ -71,4 +71,35 @@
     <h3>Results</h3>
     <p>
       The JA3 hash from the clean browser session was different from the hash
-      produced when Mitmproxy intercepted the traffic.
+      produced when Mitmproxy intercepted the traffic. This confirmed that TLS
+      handshake characteristics change in a detectable way when a MITM proxy is
+      present.
+    </p>
+
+    <h3>Analysis</h3>
+    <ul>
+      <li><strong>Demonstrated risk:</strong> JA3 fingerprints highlight deviations in handshake parameters introduced by interception.</li>
+      <li><strong>Limitations:</strong> JA3 can be evaded by sophisticated attackers who mimic legitimate fingerprints; fingerprints also vary across browsers and versions.</li>
+      <li><strong>Learning outcome:</strong> Built and analysed an intercepted TLS environment, understood how client-side behaviour is reflected in handshake metadata.</li>
+    </ul>
+
+    <h3>Defensive Relevance</h3>
+    <ul>
+      <li>Security teams can integrate JA3/JA3S into IDS tools such as Suricata or Zeek to flag suspicious sessions.</li>
+      <li>Detection requires maintaining up-to-date fingerprint databases to minimise false positives.</li>
+      <li>Fingerprinting should be combined with other telemetry (certificate analysis, traffic patterns) for reliable MITM detection.</li>
+    </ul>
+
+    <h3>Ethical Context</h3>
+    <p>
+      This project was conducted in a controlled lab environment. All
+      interception was performed on systems I owned and managed.
+    </p>
+
+  </section>
+
+  <footer class="footer">
+    <small>Designed &amp; coded by me.</small>
+  </footer>
+</body>
+</html>
