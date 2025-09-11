@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html> 
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -7,48 +7,97 @@
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
 <body>
-  <header class="nav"><div class="brand"><a href="../index.html">← Portfolio</a></div></header>
-  <section class="section">
-   <h1>TLS 1.2 RSA Key Exchange Decryption</h1>
+  <header class="nav">
+    <div class="brand"><a href="../index.html">← Portfolio</a></div>
+  </header>
 
-    <h3>Purpose</h3>
-    <p>This project tested the vulnerability of TLS 1.2 sessions using RSA key exchange. The goal was to show how a compromised private key allows attackers to decrypt captured traffic, even after the session has ended due to the lack of forward secrecy in RSA ciphers.</p>
+  <section class="section">
+    <h1>TLS 1.2 RSA Key Exchange Decryption</h1>
+
+    <h3>Objective</h3>
+    <p>
+      Show how TLS&nbsp;1.2 sessions configured with RSA key exchange are
+      vulnerable when a server’s private key is exposed. RSA lacks forward
+      secrecy, meaning an attacker who records traffic can later decrypt it
+      retroactively.
+    </p>
+
+    <h3>Environment / Threat Model</h3>
+    <ul>
+      <li>Three VMs: <strong>client</strong>, <strong>attacker</strong>, <strong>nginx webserver</strong> (self-signed certificate).</li>
+      <li>Webserver restricted to RSA cipher suites under TLS&nbsp;1.2.</li>
+      <li>Client submits login credentials over HTTPS.</li>
+      <li>Attacker captures traffic with <code>tcpdump</code>.</li>
+      <li>Assumption: attacker has obtained server private key.</li>
+    </ul>
 
     <h3>Methodology</h3>
-    <p>Three VMs were configured: a client, an attacker, and an nginx webserver with a self-signed certificate. The server was restricted to RSA cipher suites under TLS 1.2. The client logged into a simple HTTPS form hosted by the webserver, while the attacker monitored traffic with tcpdump.</p>
-
-    <h3>Process</h3>
-    <p>Traffic was captured with tcpdump and saved as a <code>.pcap</code>. In Wireshark, HTTP filters confirmed TLS 1.2 with RSA.</p>
-<figure>
-  <img src="../assets/img/ServerHello.png" 
-       alt="Wireshark capture of TLS 1.2 handshake"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 1: TLS 1.2 handshake confirmed in Wireshark through a "Server Hello" packet.</figcaption>
-  <img src="../assets/img/CapturedPost.png" 
-       alt="Wireshark capture of TLS 1.2 handshake"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 2: Encrypted POST packet found using HTTP filter.</figcaption>
-</figure>
-    <p>The webservers private key was then imported into wireshark and applied to the encrypted POST packet</p>
-     <figure>
-  <img src="../assets/img/PrivateKeyImport.png" 
-       alt="Wireshark showing decrypted POST request"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 3: The servers private key was imported into Wireshark</figcaption>
-</figure>
-    <h3>Result</h3>
-    <p> Importing the server’s private key into wireshark enabled decryption of the POST packet. Subsiquently, the HTTP POST request, including plaintext username and password, was successfully recovered.</p>
+    <p>
+      The attacker captured the TLS handshake and application data, saved into
+      a <code>.pcap</code>. In Wireshark, filters confirmed RSA key exchange.
+    </p>
 
     <figure>
-  <img src="../assets/img/DecryptedPost.png" 
-       alt="Wireshark showing decrypted POST request"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 4: Decrypted POST request showing recovered login credentials.</figcaption>
-</figure>
-    <h3>Value</h3>
-    <p>Demonstrates I can setup and configure a secure lab, capture analyse and decrypt traffic, and exploit weaknesses of TLS 1.2 when configured with RSA ciphers. </p>
- 
+      <img src="../assets/img/ServerHello.png" 
+           alt="Wireshark capture of TLS 1.2 handshake"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure&nbsp;1: TLS 1.2 handshake confirmed through ServerHello packet.</figcaption>
+
+      <img src="../assets/img/CapturedPost.png" 
+           alt="Encrypted POST request captured"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure&nbsp;2: Encrypted POST packet observed in capture.</figcaption>
+    </figure>
+
+    <p>
+      The server’s private key was imported into Wireshark, enabling decryption
+      of the TLS session.
+    </p>
+
+    <figure>
+      <img src="../assets/img/PrivateKeyImport.png" 
+           alt="Wireshark key import"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure&nbsp;3: Private key imported into Wireshark.</figcaption>
+    </figure>
+
+    <h3>Results</h3>
+    <p>
+      Once the key was loaded, Wireshark successfully decrypted the HTTPS
+      session. The plaintext POST request revealed submitted credentials.
+    </p>
+
+    <figure>
+      <img src="../assets/img/DecryptedPost.png" 
+           alt="Decrypted POST request in Wireshark"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure&nbsp;4: Decrypted POST request showing recovered login data.</figcaption>
+    </figure>
+
+    <h3>Analysis</h3>
+    <ul>
+      <li><strong>Demonstrated risk:</strong> RSA key exchange exposes all past sessions if the private key is compromised.</li>
+      <li><strong>Limitations:</strong> Modern servers usually prefer ECDHE/DHE, which provide forward secrecy. RSA key exchange is mostly legacy.</li>
+      <li><strong>Learning outcome:</strong> Ability to configure lab environments, capture/analyze traffic, and apply cryptographic understanding to practical exploitation.</li>
+    </ul>
+
+    <h3>Defensive Relevance</h3>
+    <ul>
+      <li>Organizations should disable RSA-based cipher suites in TLS&nbsp;1.2 and enforce ECDHE.</li>
+      <li>Monitor server configs for weak cipher use; include this in compliance checks.</li>
+      <li>Incident responders should be aware: if a key is compromised, all previously recorded traffic is at risk.</li>
+    </ul>
+
+    <h3>Ethical Context</h3>
+    <p>
+      This exercise was performed entirely within a self-controlled lab
+      environment for educational purposes.
+    </p>
+
   </section>
-  <footer class="footer"><small>Designed & coded by me.</small></footer>
+
+  <footer class="footer">
+    <small>Designed &amp; coded by me.</small>
+  </footer>
 </body>
 </html>
