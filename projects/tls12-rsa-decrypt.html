@@ -16,82 +16,89 @@
 
     <h3>Objective</h3>
     <p>
-      Demonstrate how TLS&nbsp;1.2 sessions configured with RSA key exchange
-      are vulnerable if a server’s private key is compromised. Because RSA does
-      not provide forward secrecy, previously recorded traffic can be decrypted
-      retroactively.
+      Demonstrate how TLS&nbsp;1.2 sessions configured with RSA key exchange are
+      vulnerable if a server’s private key is compromised. Because RSA does not
+      provide forward secrecy, previously recorded traffic can be decrypted
+      after the fact.
     </p>
 
     <h3>Environment & Threat Model</h3>
     <ul>
-      <li>Three VMs: <strong>client</strong>, <strong>attacker</strong>, and <strong>nginx webserver</strong> with a self-signed certificate.</li>
+      <li>Three VMs: <strong>client</strong>, <strong>attacker</strong>, <strong>nginx webserver</strong> (self-signed certificate).</li>
       <li>Webserver restricted to TLS&nbsp;1.2 RSA cipher suites only.</li>
       <li>Client submitted login credentials over HTTPS.</li>
       <li>Attacker captured traffic with <code>tcpdump</code>.</li>
       <li>Threat model assumption: attacker has access to the server’s private key.</li>
     </ul>
 
-    <h3>Methodology</h3>
+    <h3>Methodology & Process</h3>
     <p>
-      The attacker captured the TLS handshake and application traffic into a
-      <code>.pcap</code> file. Wireshark was used to confirm the cipher suite
-      and locate the encrypted POST request.
+      Three VMs were configured: a client, an attacker, and an nginx webserver
+      with a self-signed certificate. The server was restricted to RSA cipher
+      suites under TLS 1.2. The client logged into a simple HTTPS form hosted by
+      the webserver, while the attacker monitored traffic with tcpdump.
+    </p>
+
+    <p>
+      Traffic was captured with tcpdump and saved as a <code>.pcap</code>. In
+      Wireshark, HTTP filters confirmed TLS 1.2 with RSA.
     </p>
 
     <figure>
       <img src="../assets/img/ServerHello.png" 
            alt="Wireshark capture of TLS 1.2 handshake"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-      <figcaption>Figure&nbsp;1: TLS 1.2 handshake confirmed through ServerHello packet.</figcaption>
+      <figcaption>Figure 1: TLS 1.2 handshake confirmed in Wireshark through a "Server Hello" packet.</figcaption>
 
       <img src="../assets/img/CapturedPost.png" 
-           alt="Encrypted POST request captured"
+           alt="Wireshark capture of encrypted POST packet"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-      <figcaption>Figure&nbsp;2: Encrypted POST packet observed in capture.</figcaption>
+      <figcaption>Figure 2: Encrypted POST packet found using HTTP filter.</figcaption>
     </figure>
 
     <p>
-      The server’s private key was imported into Wireshark, enabling decryption
-      of the TLS session.
+      The webserver’s private key was then imported into Wireshark and applied
+      to the encrypted POST packet.
     </p>
 
     <figure>
       <img src="../assets/img/PrivateKeyImport.png" 
-           alt="Wireshark key import"
+           alt="Wireshark showing decrypted POST request"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-      <figcaption>Figure&nbsp;3: Private key imported into Wireshark.</figcaption>
+      <figcaption>Figure 3: The server’s private key was imported into Wireshark.</figcaption>
     </figure>
 
     <h3>Results</h3>
     <p>
-      Wireshark successfully decrypted the captured HTTPS session. The plaintext
-      POST request revealed the submitted username and password.
+      Importing the server’s private key into Wireshark enabled decryption of
+      the POST packet. Subsequently, the HTTP POST request, including plaintext
+      username and password, was successfully recovered.
     </p>
 
     <figure>
       <img src="../assets/img/DecryptedPost.png" 
-           alt="Decrypted POST request in Wireshark"
+           alt="Wireshark showing decrypted POST request"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-      <figcaption>Figure&nbsp;4: Decrypted POST request showing recovered login data.</figcaption>
+      <figcaption>Figure 4: Decrypted POST request showing recovered login credentials.</figcaption>
     </figure>
 
     <h3>Analysis</h3>
     <ul>
-      <li><strong>Demonstrated risk:</strong> RSA key exchange exposes all past sessions if the private key is compromised.</li>
-      <li><strong>Limitations:</strong> This applies only to RSA cipher suites; modern servers prefer ECDHE/DHE with forward secrecy.</li>
-      <li><strong>Learning outcome:</strong> Ability to configure lab environments, capture/analyze traffic, and apply cryptographic knowledge in practice.</li>
+      <li><strong>Risk:</strong> RSA key exchange allows an attacker with the private key to retroactively decrypt all previously recorded sessions.</li>
+      <li><strong>Limitations:</strong> This scenario is relevant only where RSA cipher suites are enabled. Most modern servers use ECDHE/DHE with forward secrecy.</li>
+      <li><strong>Learning outcome:</strong> Configuring a lab, capturing and analyzing encrypted traffic, and applying cryptographic knowledge in practice.</li>
     </ul>
 
     <h3>Defensive Relevance</h3>
     <ul>
-      <li>Disable RSA-based cipher suites in TLS&nbsp;1.2 and enforce forward-secret ciphers (ECDHE).</li>
-      <li>Regularly audit server configurations for weak ciphers and compliance.</li>
-      <li>Incident responders must consider: if a private key leaks, all previously captured traffic is vulnerable.</li>
+      <li>Disable RSA-based cipher suites and enforce forward-secret ciphers such as ECDHE.</li>
+      <li>Audit TLS configurations to ensure strong ciphers are enforced.</li>
+      <li>Recognize that if a private key leaks, all previously captured traffic is compromised.</li>
     </ul>
 
     <h3>Ethical Context</h3>
     <p>
-      This project was performed entirely in a self-controlled lab environment
+      This exercise was conducted entirely in a self-controlled lab environment
       for educational purposes. No external systems were targeted.
     </p>
 
