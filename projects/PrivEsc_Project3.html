@@ -3,75 +3,147 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TLS 1.2 RSA Key Exchange Decryption — Project</title>
+  <title>Privilege Escalation via Misconfigured SUID Binary — Project</title>
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
 <body>
-  <header class="nav"><div class="brand"><a href="../index.html">← Portfolio</a></div></header>
+  <header class="nav">
+    <div class="brand"><a href="../index.html">← Portfolio</a></div>
+  </header>
+
   <section class="section">
-    <h1>Inside attacker Privilege-Escalation</h1>
-    <h2><strong>Purpose:</strong></h2>
-      </p>In this project I demonstrate how a single misconfigured SUID  binary can allow escalation from a restricted user account to full root compromise. My aim was to simulate a realistic penetration-testing scenario where careful enumeration of privilege boundaries exposed an anomalous binary, and to show how that weakness could be exploited and then remediated.</p>
-    <h3><strong>Methodology:</strong></h3>
-      <p>I started by configuring a fresh Ubuntu virtual machine where I created a non-privileged user account to act as the attacker’s foothold. To simulate a misconfiguration commonly seen in practice, I introduced a root-owned binary into <code>/usr/local/bin</code> and applied the SUID bit. I began by confirming that my attacker account had no elevated privileges. I then enumerated the system to locate binaries with the SUID permission set. I then identified the unusual entry, inspected its properties, and executed it to test whether it could be abused. After confirming escalation, I validated the impact by reading a file normally restricted to root, and finally remediated the misconfiguration by removing the SUID bit and proving the escalation path no longer worked.</p>
-   <h3><strong>Process:</strong></h3>
-<p>I began as the restricted <code>attacker</code> user. Running <code>whoami</code> and <code>id</code> confirmed I had no administrative privileges, and attempts to read <code>/etc/shadow</code> failed with “Permission denied.”</p>
-<figure>
-  <img src="../assets/img/AttackerPermissions.png" 
-       alt="Figure 1: Restricted user access denied to /etc/shadow"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Baseline: restricted user denied access to <code>/etc/shadow</code>.</figcaption>
-</figure>
+    <h1>Privilege Escalation via Misconfigured SUID Binary</h1>
 
-<p>Next, I enumerated SUID binaries using <code>find / -perm -4000 -type f</code>. Alongside the standard system entries, an unusual binary named <code>suid_adm</code> appeared in <code>/usr/local/bin</code>.</p>
-<figure>
-  <img src="../assets/img/SuidList.png" 
-       alt="Figure 2: Enumeration showing anomalous SUID binary"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Enumeration revealed an anomalous SUID binary: <code>/usr/local/bin/suid_adm</code>.</figcaption>
-</figure>
+    <h3>Objective</h3>
+    <p>
+      Demonstrate how a single misconfigured SUID binary can allow escalation
+      from a restricted user account to full root compromise. The aim was to
+      simulate a penetration-testing scenario where enumeration of privilege
+      boundaries exposed an anomalous binary, which was then exploited and
+      remediated.
+    </p>
 
-<p>Inspection with <code>ls -l</code> showed the binary was owned by root and marked with the SUID bit (<code>-rwsr-xr-x</code>), making it a candidate for privilege escalation.</p>
-<figure>
-  <img src="../assets/img/BinCheck.png" 
-       alt="Figure 3: SUID bit set on root-owned binary"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>The binary was root-owned and marked with the SUID bit.</figcaption>
-</figure>
+    <h3>Environment & Threat Model</h3>
+    <ul>
+      <li>Ubuntu VM configured with a restricted <code>attacker</code> user.</li>
+      <li>A root-owned binary placed in <code>/usr/local/bin</code> with the SUID bit set.</li>
+      <li>Threat model assumption: attacker already has low-privileged shell access.</li>
+      <li>Objective for attacker: escalate privileges to root by abusing misconfiguration.</li>
+    </ul>
 
-<p>Executing <code>suid_adm</code> dropped me into a new shell. Repeating <code>whoami</code> and <code>id</code> confirmed my user context had changed to root.</p>
-<figure>
-  <img src="../assets/img/AttackerRootGain.png" 
-       alt="Figure 4: Privilege escalation to root"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Executing the binary escalated privileges to root.</figcaption>
-</figure>
+    <h3>Methodology & Process</h3>
+    <p>
+      I started by configuring a fresh Ubuntu VM with a non-privileged user
+      account. To simulate a misconfiguration, I introduced a root-owned binary
+      into <code>/usr/local/bin</code> and applied the SUID bit.
+    </p>
 
-<p>With elevated privileges, I was able to access <code>/etc/shadow</code>, validating the severity of the misconfiguration.</p>
-<figure>
-  <img src="../assets/img/AttackerGain.png" 
-       alt="Figure 5: Access to /etc/shadow after escalation"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Root access enabled reading of <code>/etc/shadow</code>.</figcaption>
-</figure>
+    <p>
+      As the <code>attacker</code> user, <code>whoami</code> and <code>id</code>
+      confirmed no administrative privileges, and attempts to read
+      <code>/etc/shadow</code> failed with “Permission denied.”
+    </p>
 
-<p>Finally, I remediated the issue by removing the SUID bit with <code>chmod u-s</code>. Verifying with <code>ls -l</code> showed normal permissions (<code>-rwxr-xr-x</code>), and re-executing the binary as the restricted user no longer provided elevated privileges.</p>
-<figure>
-  <img src="../assets/img/VulnFix.png" 
-       alt="Figure 6: SUID bit removed, escalation prevented"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>After remediation, the binary no longer allowed escalation.</figcaption>
-</figure>
-<h3><strong>Result:</strong></h3>
-  <p>
-    Through this workflow I escalated privileges from an unprivileged account to root by exploiting a single misconfigured binary. I then demonstrated that removing the SUID bit immediately closed the escalation path.
-  </p>
+    <figure>
+      <img src="../assets/img/AttackerPermissions.png"
+           alt="Restricted user access denied to /etc/shadow"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Baseline: restricted user denied access to <code>/etc/shadow</code>.</figcaption>
+    </figure>
 
-  <h3><strong>Value:</strong></h3>
-  <p>
-    This project highlights how attackers approach privilege escalation in practice. From my perspective as the attacker, the key steps were enumeration, anomaly detection, exploitation and validation. From the defender’s perspective, the project reinforces the importance of regularly auditing binaries with elevated permissions and removing unnecessary SUID bits. Including this case study in my portfolio demonstrates not only that I can identify and exploit misconfigurations, but also that I understand how to remediate them. It complements my other work on TLS and vulnerability scanning by adding a system-level exploitation example, reflecting scenarios that regularly appear in real penetration tests.
-  </p>
+    <p>
+      Enumeration with <code>find / -perm -4000 -type f</code> revealed an
+      unusual SUID binary named <code>suid_adm</code> in
+      <code>/usr/local/bin</code>.
+    </p>
+
+    <figure>
+      <img src="../assets/img/SuidList.png"
+           alt="Enumeration showing anomalous SUID binary"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Enumeration revealed anomalous SUID binary: <code>/usr/local/bin/suid_adm</code>.</figcaption>
+    </figure>
+
+    <p>
+      Inspection with <code>ls -l</code> showed the binary was root-owned and
+      marked with the SUID bit (<code>-rwsr-xr-x</code>).
+    </p>
+
+    <figure>
+      <img src="../assets/img/BinCheck.png"
+           alt="SUID bit set on root-owned binary"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>The binary was root-owned and marked with the SUID bit.</figcaption>
+    </figure>
+
+    <p>
+      Executing <code>suid_adm</code> dropped me into a new shell. Running
+      <code>whoami</code> and <code>id</code> confirmed escalation to root.
+    </p>
+
+    <figure>
+      <img src="../assets/img/AttackerRootGain.png"
+           alt="Privilege escalation to root"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Executing the binary escalated privileges to root.</figcaption>
+    </figure>
+
+    <p>
+      With elevated privileges, I was able to read <code>/etc/shadow</code>,
+      validating the impact.
+    </p>
+
+    <figure>
+      <img src="../assets/img/AttackerGain.png"
+           alt="Access to /etc/shadow after escalation"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Root access enabled reading of <code>/etc/shadow</code>.</figcaption>
+    </figure>
+
+    <p>
+      Finally, I remediated the issue by removing the SUID bit with
+      <code>chmod u-s</code>. Verification with <code>ls -l</code> showed normal
+      permissions, and re-execution no longer escalated privileges.
+    </p>
+
+    <figure>
+      <img src="../assets/img/VulnFix.png"
+           alt="SUID bit removed, escalation prevented"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>After remediation, the binary no longer allowed escalation.</figcaption>
+    </figure>
+
+    <h3>Results</h3>
+    <p>
+      I successfully escalated privileges from a restricted user to root by
+      exploiting a single misconfigured binary. Removing the SUID bit
+      immediately closed the escalation path.
+    </p>
+
+    <h3>Analysis</h3>
+    <ul>
+      <li><strong>Demonstrated risk:</strong> A single misconfigured SUID binary is enough for full compromise.</li>
+      <li><strong>Limitations:</strong> Modern systems often restrict SUID use; exploitation depends on local shell access.</li>
+      <li><strong>Learning outcome:</strong> Practice in enumeration, exploitation, and remediation of privilege escalation paths.</li>
+    </ul>
+
+    <h3>Defensive Relevance</h3>
+    <ul>
+      <li>Audit systems for unusual SUID binaries using commands such as <code>find / -perm -4000 -type f</code>.</li>
+      <li>Remove or replace unnecessary SUID bits with safer privilege mechanisms (e.g., <code>sudo</code> rules).</li>
+      <li>Monitor logs for abnormal execution of privileged binaries.</li>
+      <li>Reference: CWE-250 “Execution with Unnecessary Privileges.”</li>
+    </ul>
+
+    <h3>Ethical Context</h3>
+    <p>
+      This project was conducted in a self-controlled lab environment. All
+      misconfigurations were deliberately introduced for educational purposes.
+    </p>
   </section>
-  <footer class="footer"><small>Designed & coded by me.</small></footer>
+
+  <footer class="footer">
+    <small>Designed &amp; coded by me.</small>
+  </footer>
 </body>
 </html>
