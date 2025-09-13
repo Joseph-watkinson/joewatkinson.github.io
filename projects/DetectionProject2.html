@@ -3,71 +3,141 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TLS 1.2 RSA Key Exchange Decryption — Project</title>
+  <title>Reconnaissance & Vulnerability Scanning — Project</title>
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
 <body>
-  <header class="nav"><div class="brand"><a href="../index.html">← Portfolio</a></div></header>
+  <header class="nav">
+    <div class="brand"><a href="../index.html">← Portfolio</a></div>
+  </header>
+
   <section class="section">
-    <h1>TLS 1.2 RSA Key Exchange Decryption</h1>
-    <p><strong>Purpose:</strong> This project demonstrates the use of multiple reconnaissance and vulnerability scanning tools to identify weaknesses in a webserver. The goal was to simulate how an attacker enumerates services, probes for misconfigurations, and discovers hidden content. This project also highlights how reconnaissance techniques can be detected server-side..</p>
-    <p><strong>Methodology:</strong> The target system was an Nginx webserver I configured, hosting HTTPS with a self-signed TLS certificate.The webserver had a simple login page that logged inputs to a php file.</p>
+    <h1>Reconnaissance & Vulnerability Scanning</h1>
+
+    <h3>Objective</h3>
+    <p>
+      Demonstrate how attackers enumerate services, probe for weaknesses, and
+      brute-force hidden content, while also showing how such scanning appears
+      from the defender’s perspective. The project highlights both offensive
+      discovery and defensive detection.
+    </p>
+
+    <h3>Environment & Threat Model</h3>
+    <ul>
+      <li>Target: self-configured <strong>Nginx webserver</strong> with HTTPS and a self-signed TLS certificate.</li>
+      <li>Server hosted a simple login page that logged inputs to a PHP file.</li>
+      <li>Attacker machine used <strong>Nmap</strong>, <strong>Nikto</strong>, and <strong>Gobuster</strong>.</li>
+      <li>Traffic captured using <strong>tcpdump</strong> and analysed in Wireshark.</li>
+      <li>Assumption: attacker has network access to the target system.</li>
+    </ul>
+
+    <h3>Methodology & Process</h3>
+    <p>
+      The target system was an Nginx webserver I configured, hosting HTTPS with
+      a self-signed TLS certificate. The webserver had a simple login page that
+      logged inputs to a PHP file.
+    </p>
+
     <figure>
-  <img src="../assets/img/TLSSetup.png" 
-       alt="Figure 1: TLS configuration of the target Webserver"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 1: TLS configuration of the target Webserver</figcaption>
-</figure>
-   <figure>
-  <img src="../assets/img/LoginPHP.png" 
-       alt="Figure 2: PHP configured for the login form "login.php""
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 2: PHP configured for the login form "login.php"</figcaption>
-</figure>
+      <img src="../assets/img/TLSSetup.png"
+           alt="TLS configuration of the target Webserver"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure 1: TLS configuration of the target Webserver.</figcaption>
+
+      <img src="../assets/img/LoginPHP.png"
+           alt="PHP configured for the login form login.php"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure 2: PHP configured for the login form <code>login.php</code>.</figcaption>
+
+      <img src="../assets/img/WebserverPage.png"
+           alt="Webserver hosted page"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure 3: The hosted webserver page.</figcaption>
+    </figure>
+
+    <p>
+      The vulnerability scanning workflow began with service discovery to
+      confirm exposed ports, followed by TLS enumeration to determine supported
+      versions and cipher suites. Next, Nikto scanned for misconfigurations and
+      sensitive files, and Gobuster brute-forced hidden directories. Finally,
+      Wireshark was used to observe scanning traffic from the server’s
+      perspective.
+    </p>
+
+    <p><strong>Service Discovery:</strong> Nmap confirmed that the target hosted HTTP and HTTPS. An initial scan identified Nginx on ports 80 and 443.</p>
+
     <figure>
-  <img src="../assets/img/WebserverPage.png" 
-       alt="Image of the Webservers hosted page"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 3: Image of the Webservers hosted page"</figcaption>
-</figure>
-    <p>The vulneravility scanning of the target webserver was carried out using Nmap, Nikto, Gobuster, and Wireshark. The workflow began with service discovery to confirm exposed ports followed by TLS enumeration to determine which versions and cipher suites were supported. Next, Nikto was used to scan for misconfigurations and sensitive files, and Gobuster was employed to brute-force hidden directories. Finally, Wireshark was used to capture the scanning traffic in order to observe how such activity appears from the targets perspective<p>
-    <p><strong>Process:</strong> Firstly, Service discovery with Nmap confirmed that the target was hosting both HTTP and HTTPS. An initial scan identified Nginx running on ports 80 and 443.</p>
-     <figure>
-  <img src="../assets/img/NMAPScan.png" 
-       alt="Figure 4: NMAP scan shows nginx on port 80/443"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 4: NMAP scan shows nginx on port 80/443"</figcaption>
-</figure>
-    <p>TLS enumeration was then performed using Nmap’s ssl-enum-ciphers script. The initial results showed that the server was accepting connections over TLS 1.0 and TLS 1.1, both of which are deprecated and insecure. After reconfiguring Nginx to restrict connections to TLS 1.2 and higher, a second scan verified that the insecure protocols were disabled.</p>
-     <figure>
-  <img src="../assets/img/NMAPTLS.png" 
-       alt="Image of the Webservers hosted page"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 5: NMAP enum scan showing TLS1.2"</figcaption>
-</figure>
-    <p>Nikto was then launched against the HTTP service. The scan generated hundreds of automated GET requests in rapid succession, probing for common files and directories. Among the results was a PHP login page that had been placed deliberately on the server.<p>
-        <figure>
-  <img src="../assets/img/NiktoScan.png" 
-       alt=">Figure 6: Nikto Identifying the login.php file within the webserver"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 6: Nikto Identifying the login.php file within the webserver"</figcaption>
-</figure>
-      <p>To demonstrate that vulnerability scans can be actively detected by network admins, I ran TCPdump configured to the webservers IP from the attacker machine, I then ran the nikto scan again. I opened the .pcap in Wireshark to see the flood of requests Nikto causes during its scanning<p>
-               <figure>
-  <img src="../assets/img/TCPDUMP.png" 
-       alt="Figure 6: TCP dump initiated on the attacker desktop"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 7: TCP dump initiated on the attacker desktop"</figcaption>
-</figure>
-               <figure>
-  <img src="../assets/img/NiktoMass.png" 
-       alt="Figure 7: Wireshark capture of the traffic generated by NIKTO"
-       style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-  <figcaption>Figure 8: Wireshark capture of the traffic generated by NIKTO"</figcaption>
-</figure>
-    <p><strong>Result:</strong> The assessment confirmed two exposed services, HTTP on port 80 and HTTPS on port 443. TLS scanning initially revealed the presence of legacy protocols, which were removed through reconfiguration. Nikto flagged several misconfigurations and discovered an exposed login form, while Gobuster successfully enumerated additional directories. Wireshark captured the Nikto traffic, highlighting how visible automated scanning appears on the network..</p>
-    <p><strong>Value:</strong> This project demonstrates the ability to perform vulnerability scanning using a range of tools and to interpret their findings in context. It shows competence in configuring a server, identifying insecure defaults, and applying remediation measures such as restricting TLS versions. It also highlights the importance of validating scanner output and understanding how scanning traffic is observable from a defensive perspective.</p>
+      <img src="../assets/img/NMAPScan.png"
+           alt="Nmap scan showing nginx on port 80/443"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure 4: Nmap scan showing nginx on ports 80 and 443.</figcaption>
+    </figure>
+
+    <p><strong>TLS Enumeration:</strong> Using Nmap’s <code>ssl-enum-ciphers</code> script, the server was found to accept TLS 1.0 and 1.1. After reconfiguring Nginx, a second scan verified only TLS 1.2+ remained enabled.</p>
+
+    <figure>
+      <img src="../assets/img/NMAPTLS.png"
+           alt="Nmap TLS enumeration showing TLS 1.2 only"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure 5: Nmap TLS enumeration showing TLS 1.2.</figcaption>
+    </figure>
+
+    <p><strong>Nikto Scan:</strong> Generated hundreds of GET requests, probing for common files and directories. Discovered the deliberately placed PHP login page.</p>
+
+    <figure>
+      <img src="../assets/img/NiktoScan.png"
+           alt="Nikto identifying login.php"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure 6: Nikto identifying the login.php file.</figcaption>
+    </figure>
+
+    <p><strong>Network Capture:</strong> To demonstrate defender visibility, I ran tcpdump on the webserver while re-running Nikto. Wireshark showed the resulting flood of requests.</p>
+
+    <figure>
+      <img src="../assets/img/TCPDUMP.png"
+           alt="TCPdump capture on attacker desktop"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure 7: tcpdump initiated on attacker desktop.</figcaption>
+
+      <img src="../assets/img/NiktoMass.png"
+           alt="Wireshark capture of Nikto traffic"
+           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <figcaption>Figure 8: Wireshark capture of Nikto traffic flood.</figcaption>
+    </figure>
+
+    <h3>Results</h3>
+    <p>
+      The assessment confirmed two exposed services: HTTP on port 80 and HTTPS
+      on port 443. TLS scanning initially revealed legacy protocols (TLS 1.0 and
+      1.1), which were removed through reconfiguration. Nikto flagged
+      misconfigurations and discovered an exposed login form. Gobuster
+      enumerated additional directories. Wireshark highlighted how noisy
+      scanning traffic looks from the defender’s perspective.
+    </p>
+
+    <h3>Analysis</h3>
+    <ul>
+      <li><strong>Demonstrated risk:</strong> Default server configs may allow insecure TLS versions and expose sensitive files.</li>
+      <li><strong>Limitations:</strong> Scanning results often contain false positives; production environments may trigger alerts or rate-limiting.</li>
+      <li><strong>Learning outcome:</strong> Gained practice chaining multiple reconnaissance tools and interpreting results from both attacker and defender views.</li>
+    </ul>
+
+    <h3>Defensive Relevance</h3>
+    <ul>
+      <li>System administrators should disable legacy TLS protocols and enforce modern cipher suites.</li>
+      <li>IDS/IPS can detect noisy scanner traffic like Nikto; defenders can tune rules to alert on such activity.</li>
+      <li>Validating scanner output prevents chasing false positives and reduces wasted remediation effort.</li>
+    </ul>
+
+    <h3>Ethical Context</h3>
+    <p>
+      All scanning was performed against a self-configured lab environment under
+      my control. No external systems were targeted.
+    </p>
   </section>
-  <footer class="footer"><small>Designed & coded by me.</small></footer>
+
+  <footer class="footer">
+    <small>Designed &amp; coded by me.</small>
+  </footer>
 </body>
 </html>
