@@ -73,7 +73,7 @@
       <figcaption>Figure 4: Nmap scan showing nginx on ports 80 and 443.</figcaption>
     </figure>
 
-    <p><strong>TLS Enumeration:</strong> Using Nmap’s <code>ssl-enum-ciphers</code> script, the server was found to accept TLS 1.0 and 1.1. After reconfiguring Nginx, a second scan verified only TLS 1.2+ remained enabled.</p>
+    <p><strong>TLS Enumeration:</strong> Using Nmap’s <code>ssl-enum-ciphers</code> script, the server was found to be configured with TLS 1.2</p>
 
     <figure>
       <img src="../assets/img/NMAPTLS.png"
@@ -108,8 +108,7 @@
     <h3>Results</h3>
     <p>
       The assessment confirmed two exposed services: HTTP on port 80 and HTTPS
-      on port 443. TLS scanning initially revealed legacy protocols (TLS 1.0 and
-      1.1), which were removed through reconfiguration. Nikto flagged
+      on port 443. TLS scanning revealed the use of TLS 1.2. Nikto flagged
       misconfigurations and discovered an exposed login form. Gobuster
       enumerated additional directories. Wireshark highlighted how noisy
       scanning traffic looks from the defender’s perspective.
@@ -118,15 +117,14 @@
     <h3>Analysis</h3>
     <ul>
       <li><strong>Demonstrated risk:</strong> Default server configs may allow insecure TLS versions and expose sensitive files.</li>
-      <li><strong>Limitations:</strong> Scanning results often contain false positives; production environments may trigger alerts or rate-limiting.</li>
-      <li><strong>Learning outcome:</strong> Gained practice chaining multiple reconnaissance tools and interpreting results from both attacker and defender views.</li>
+      <li><strong>Limitations:</strong> Scanning results can often contain false positives and enterprise environments may trigger alerts or rate-limiting if a flood of requests is executed.</li>
+      <li><strong>Learning outcome:</strong> Gained practice chaining multiple reconnaissance tools and interpreting results from both the attacker and defender side</li>
     </ul>
 
     <h3>Defensive Relevance</h3>
     <ul>
-      <li>System administrators should disable legacy TLS protocols and enforce modern cipher suites.</li>
-      <li>IDS/IPS can detect noisy scanner traffic like Nikto; defenders can tune rules to alert on such activity.</li>
-      <li>Validating scanner output prevents chasing false positives and reduces wasted remediation effort.</li>
+      <li>System administrators should always disable legacy TLS protocols and enforce modern cipher suites.</li>
+      <li>IDS/IPS can detect noisy scanner traffic like Nikto as demonstrated; defenders can tune rules to alert on such activity.</li>
     </ul>
 
     <h3>Ethical Context</h3>
