@@ -55,30 +55,17 @@ The alert category was mapped to Initial Access / Persistence. This stage repres
            alt="Wireshark capture of TLS 1.2 handshake"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
       <figcaption>Figure 1: MS Defender SOC queue showing Medium severity authentication alert.</figcaption>
-<p>
-  Upon opening the alert, the investigation was escalated to the incident level to assess overall scope.
-</p>
-<p>
-The Incident Overview provided:
-</p>
-<ul>
-  <li>Detection rule logic.</li>
-  <li>Timeline of activity.</li>
-  <li>Incident severity.</li>
-  <li>Entity relationships via Attack Story.</li>
-</ul>
-<p>
-Reviewing the incident context ensures the alert is not analysed in isolation and helps identify correlated activity.
-</p>
       
   <p>
      Upon opening the alert, the investigation was escalated to the incident level to assess overall scope.
     </p>
-   <ul>The Incident Overview provided: </ul>
-    <li>Detection rule logic.</li>
+   <p>The Incident Overview provided:</p>
+  <ul>
+  <li>Detection rule logic.</li>
   <li>Timeline of activity.</li>
   <li>Incident severity.</li>
   <li>Entity relationships via Attack Story.</li>
+  </ul>
 <p>
 Reviewing the incident context ensures the alert is not analysed in isolation and helps identify correlated activity.
  </p>  
@@ -102,11 +89,13 @@ Reviewing the incident context ensures the alert is not analysed in isolation an
     <p>
       The investigation pivoted to the source IP address associated with the authentication attempts.
     </p>
-   <ul>Investigation into the IP address revealed: </ul>
-   <li>Geolocation: North Korea</li>
-    <li>ASN ownership</li>
-    <li>Suspicious reputation score</li>
-    <li>Multiple correlated alerts</li>
+   <p> Investigation into the IP address revealed: </p>
+  <ul>
+  <li>Geolocation: North Korea</li>
+  <li>ASN ownership</li>
+  <li>Suspicious reputation score</li>
+  <li>Multiple correlated alerts</li>
+  </ul>
 <p>
 IP enrichment is critical in assessing whether authentication attempts originate from hostile or anomalous infrastructure.
  </p>  
