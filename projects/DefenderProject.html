@@ -16,28 +16,33 @@
 
     <h3>Objective</h3>
     <p>
-      Demonstrate how TLS&nbsp;1.2 sessions configured with RSA key exchange are
-      vulnerable if a server’s private key is compromised. Because RSA does not
-      provide forward secrecy, previously recorded traffic can be decrypted
-      after the fact.
+      Demonstrate investigation and triage of a Microsoft Defender alert identifying repeated sign-in attempts from a suspicious external IP address targeting disabled accounts. The goal was to determine whether the activity represented malicious user activity (Initial Access / brute-force probing) or a benign authentication misconfiguration.
     </p>
 
     <h3>Environment & Threat Model</h3>
-    <ul>
-      <li>Three VMs: <strong>client</strong>, <strong>attacker</strong>, <strong>nginx webserver</strong> (self-signed certificate).</li>
-      <li>Webserver restricted to TLS&nbsp;1.2 RSA cipher suites only.</li>
-      <li>Client submitted login credentials over HTTPS.</li>
-      <li>Attacker captured traffic with <code>tcpdump</code>.</li>
-      <li>Threat model assumption: attacker has access to the server’s private key.</li>
-    </ul>
+<ul>
+  <li>Platform: <strong>Microsoft Defender XDR / Microsoft Sentinel</strong> (Azure tenant lab environment).</li>
+  <li>Detection source: Built-in analytics rule <strong>"Sign-ins from IPs that attempt sign-ins to disabled accounts"</strong>.</li>
+  <li>Alert severity: <strong>Medium</strong> (mapped to Initial Access / Persistence categories).</li>
+  <li>Observed behaviour: External IP generated multiple authentication attempts against <strong>disabled Azure AD accounts</strong>.</li>
+  <li>Error code observed: <code>50057</code> (User account is disabled).</li>
+  <li>Entity investigation performed on source IP address (ASN, geolocation, reputation score, correlated alerts).</li>
+  <li>Threat model assumption: activity may represent <strong>credential stuffing, brute-force enumeration, or reconnaissance of valid account names</strong> from hostile infrastructure.</li>
+</ul>
 
-    <h3>Methodology & Process</h3>
-    <p>
-      Three VMs were configured: a client, an attacker, and an nginx webserver
-      with a self-signed certificate. The server was restricted to RSA cipher
-      suites under TLS 1.2. The client logged into a simple HTTPS form hosted by
-      the webserver, while the attacker monitored traffic with tcpdump.
-    </p>
+
+    <h3>Methodology & Investigation Process</h3>
+<ul>
+  <li>Alert identified within the Microsoft Defender SOC queue and opened for triage.</li>
+  <li>Status set to <strong>In Progress</strong> and assigned to analyst to simulate Tier 1 ownership workflow.</li>
+  <li>Reviewed alert metadata, severity, rule description, and associated incident timeline.</li>
+  <li>Examined <strong>Attack Story</strong> and <strong>Incident Graph</strong> to understand entity relationships.</li>
+  <li>Pivoted to the related entity: <strong>source IP address</strong>.</li>
+  <li>Analysed IP enrichment data including <strong>ASN, geolocation, reputation score, and correlated alerts</strong>.</li>
+  <li>Assessed behavioural pattern for indicators of credential stuffing, brute-force enumeration, or reconnaissance activity.</li>
+  <li>Documented findings and applied final classification within the incident record.</li>
+</ul>
+
 
     <p>
       Traffic was captured with tcpdump and saved as a <code>.pcap</code>. In
