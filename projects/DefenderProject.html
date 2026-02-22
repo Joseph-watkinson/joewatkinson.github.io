@@ -45,16 +45,32 @@
 
 
     <p>
-      Traffic was captured with tcpdump and saved as a <code>.pcap</code>. In
-      Wireshark, HTTP filters confirmed TLS 1.2 with RSA.
+      The investigation began in the Microsoft Defender alert queue. A Medium severity alert titled “Sign-ins from IPs that attempt sign-ins to disabled accounts” was identified for triage and investigation.
+
+The alert category was mapped to Initial Access / Persistence. This stage represents standard Tier 1 monitoring workflow: identifying new alerts, reviewing severity, and determining priority.
     </p>
 
     <figure>
       <img src="../assets/img/Alert_List.png" 
            alt="Wireshark capture of TLS 1.2 handshake"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-      <figcaption>Figure 1: TLS 1.2 handshake confirmed in Wireshark through a "Server Hello" packet.</figcaption>
+      <figcaption>Figure 1: MS Defender SOC queue showing Medium severity authentication alert.</figcaption>
+<p>
+  Upon opening the alert, the investigation was escalated to the incident level to assess overall scope.
+</p>
+      <p>
+The Incident Overview provided:
+</p>
+<ul>
+  <li>Detection rule logic</li>
+  <li>Timeline of activity</li>
+  <li>Incident severity</li>
+  <li>Entity relationships via Attack Story</li>
+</ul>
 
+<p>
+Reviewing the incident context ensures the alert is not analysed in isolation and helps identify correlated activity.
+</p>
       <img src="../assets/img/Incident_Page.png" 
            alt="Wireshark capture of encrypted POST packet"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
