@@ -58,70 +58,79 @@ The alert category was mapped to Initial Access / Persistence. This stage repres
 <p>
   Upon opening the alert, the investigation was escalated to the incident level to assess overall scope.
 </p>
-      <p>
+<p>
 The Incident Overview provided:
 </p>
 <ul>
-  <li>Detection rule logic</li>
-  <li>Timeline of activity</li>
-  <li>Incident severity</li>
-  <li>Entity relationships via Attack Story</li>
+  <li>Detection rule logic.</li>
+  <li>Timeline of activity.</li>
+  <li>Incident severity.</li>
+  <li>Entity relationships via Attack Story.</li>
 </ul>
-
 <p>
 Reviewing the incident context ensures the alert is not analysed in isolation and helps identify correlated activity.
 </p>
       <img src="../assets/img/Incident_Page.png" 
            alt="Wireshark capture of encrypted POST packet"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-      <figcaption>Figure 2: Encrypted POST packet found using HTTP filter.</figcaption>
+      <figcaption>Figure 2: Incident overview showing attack severity and timeline context.</figcaption>
     </figure>
 
     <p>
-      The webserver’s private key was then imported into Wireshark and applied
-      to the encrypted POST packet.
+      After initial triage of the incident, the incident was classified as a 'false positive' (due to the its nature as a demo incident) and assigned to an agent.
     </p>
 
     <figure>
       <img src="../assets/img/Alert_Assign.png" 
            alt="Wireshark showing decrypted POST request"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-      <figcaption>Figure 3: The server’s private key was imported into Wireshark.</figcaption>
+      <figcaption>Figure 3: Incident assignment and classification after initial triage.</figcaption>
     </figure>
 
-    <h3>Results</h3>
     <p>
-      Importing the server’s private key into Wireshark enabled decryption of
-      the POST packet. Subsequently, the HTTP POST request, including plaintext
-      username and password, was successfully recovered.
+      The investigation pivoted to the source IP address associated with the authentication attempts.
     </p>
+   <ul></ul>
+Investigation into the IP address revealed:
+</ul>
+   <li>Geolocation: North Korea</li>
+    <li>ASN ownership</li>
+    <li>Suspicious reputation score</li>
+    <li>Multiple correlated alerts</li>
+<p>
+IP enrichment is critical in assessing whether authentication attempts originate from hostile or anomalous infrastructure.
+ </p>  
 
     <figure>
       <img src="../assets/img/IP_details.png" 
            alt="Wireshark showing decrypted POST request"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-      <figcaption>Figure 4: Decrypted POST request showing recovered login credentials.</figcaption>
+      <figcaption>Figure 4: IP address data  showing geolocation, ASN, reputation, and correlated alert activity.</figcaption>
     </figure>
 
     <h3>Analysis</h3>
-    <ul>
-      <li><strong>Risk:</strong> RSA key exchange allows an attacker with the private key to retroactively decrypt all previously recorded sessions.</li>
-      <li><strong>Limitations:</strong> This scenario is relevant only where RSA cipher suites are enabled. Most modern servers use ECDHE/DHE with forward secrecy.</li>
-      <li><strong>Learning outcome:</strong> Configuring a lab, capturing and analyzing encrypted traffic, and applying cryptographic knowledge in practice.</li>
-    </ul>
+<ul>
+  <li><strong>Observed behaviour:</strong> A single external IP address generated authentication attempts against one or more <strong>disabled accounts</strong> (error code <code>50057</code>), consistent with account enumeration and credential testing patterns.</li>
+  <li><strong>Risk:</strong> Repeated sign-in attempts from suspicious infrastructure can indicate <strong>password spraying / credential stuffing</strong>. If successful, this can lead to account takeover, persistence, and potential lateral movement depending on access granted.</li>
+  <li><strong>Contextual indicators:</strong> IP enrichment showed high-risk context (geolocation, ASN ownership, reputation scoring) and correlated alert activity, increasing confidence that the activity was not routine user behaviour.</li>
+  <li><strong>Limitations:</strong> This investigation was performed in a demo environment and raw sign-in telemetry in the <em>Observed in organization</em> view was not available for deeper validation (e.g., confirming successful sign-ins, Conditional Access outcomes, or session correlation).</li>
+  <li><strong>Learning outcome:</strong> Practiced Tier 1 SOC workflow including alert triage, incident scoping, entity pivoting, enrichment analysis, classification, and documentation of findings.</li>
+</ul>
 
-    <h3>Defensive Relevance</h3>
-    <ul>
-      <li>Disable RSA-based cipher suites and enforce forward-secret ciphers such as ECDHE.</li>
-      <li>Audit TLS configurations to ensure strong ciphers are enforced.</li>
-      <li>Recognize that if a private key leaks, all previously captured traffic is compromised.</li>
-    </ul>
+<h3>Defensive Relevance</h3>
+<ul>
+  <li>Enforce strong authentication controls (e.g., <strong>MFA</strong>, <strong>Conditional Access</strong>) and block high-risk sign-ins where possible.</li>
+  <li>Review and tune detections for authentication anomalies (disabled account sign-in attempts, repeated failures from a single IP, and unusual geolocations).</li>
+  <li>Implement rate-limiting and lockout policies to reduce effectiveness of password spraying and credential stuffing attacks.</li>
+  <li>Use IP-based controls where appropriate (block known hostile IPs/ASNs) while recognising attackers can rotate infrastructure.</li>
+  <li>Ensure SOC playbooks include containment steps: user password reset, session revocation, and escalation when successful authentication is suspected.</li>
+</ul>
 
-    <h3>Ethical Context</h3>
-    <p>
-      This exercise was conducted entirely in a self-controlled lab environment
-      for educational purposes. No external systems were targeted.
-    </p>
+<h3>Ethical Context</h3>
+<ul>
+  <li>This investigation was conducted using <strong>Microsoft-provided demo alerts</strong> in a controlled lab environment for educational and portfolio purposes.</li>
+  <li>No real user accounts, external systems, or production tenant resources were targeted or impacted.</li>
+</ul>
 
   </section>
 
