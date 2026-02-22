@@ -22,24 +22,24 @@
     <h3>Environment & Threat Model</h3>
 <ul>
   <li>Platform: <strong>Microsoft Defender XDR / Microsoft Sentinel</strong> (Azure tenant lab environment).</li>
-  <li>Detection source: Built-in analytics rule <strong>"Sign-ins from IPs that attempt sign-ins to disabled accounts"</strong>.</li>
-  <li>Alert severity: <strong>Medium</strong> (mapped to Initial Access / Persistence categories).</li>
-  <li>Observed behaviour: External IP generated multiple authentication attempts against <strong>disabled Azure AD accounts</strong>.</li>
+  <li>Detection method: Built-in analytics rule <strong>"Sign-ins from IPs that attempt sign-ins to disabled accounts"</strong>.</li>
+  <li>Alert severity: <strong>Medium</strong></li>
+  <li>Observed behaviour: External IP generated multiple authentication attempts against <strong>disabled Azure AD accounts</strong>, whilst successfully signing into other active accounts.</li>
   <li>Error code observed: <code>50057</code> (User account is disabled).</li>
   <li>Entity investigation performed on source IP address (ASN, geolocation, reputation score, correlated alerts).</li>
-  <li>Threat model assumption: activity may represent <strong>credential stuffing, brute-force enumeration, or reconnaissance of valid account names</strong> from hostile infrastructure.</li>
+  <li>Threat model assumption: activity may represent <strong>credential stuffing, brute-force, or reconnaissance of valid accounts</strong> from a malicious origin</li>
 </ul>
 
 
     <h3>Methodology & Investigation Process</h3>
 <ul>
-  <li>Alert identified within the Microsoft Defender SOC queue and opened for triage.</li>
-  <li>Status set to <strong>In Progress</strong> and assigned to analyst to simulate Tier 1 ownership workflow.</li>
+  <li>Alert identified within the Microsoft Defender queue and opened for triage.</li>
+  <li>Status set to <strong>In Progress</strong> and assigned to analyst to simulate Tier 1 workflow.</li>
   <li>Reviewed alert metadata, severity, rule description, and associated incident timeline.</li>
-  <li>Examined <strong>Attack Story</strong> and <strong>Incident Graph</strong> to understand entity relationships.</li>
-  <li>Pivoted to the related entity: <strong>source IP address</strong>.</li>
-  <li>Analysed IP enrichment data including <strong>ASN, geolocation, reputation score, and correlated alerts</strong>.</li>
-  <li>Assessed behavioural pattern for indicators of credential stuffing, brute-force enumeration, or reconnaissance activity.</li>
+  <li>Examined <strong>Attack Story</strong> and <strong>Incident Graph</strong> to understand alert relationships and any correlations.</li>
+  <li>Pivoted to <strong>source IP address</strong> due to nature of alert.</li>
+  <li>Analysed IP data including <strong>ASN, geolocation, reputation score, and correlated alerts</strong>.</li>
+  <li>Assessed behavioural pattern for indicators of credential stuffing, brute-force or reconnaissance activity.</li>
   <li>Documented findings and applied final classification within the incident record.</li>
 </ul>
 
@@ -51,7 +51,7 @@
 
     <figure>
       <img src="../assets/img/Alert_List.png" 
-           alt="Wireshark capture of TLS 1.2 handshake"
+           alt="Medium severity authentication alert"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
       <figcaption>Figure 1: MS Defender SOC queue showing Medium severity authentication alert.</figcaption>
     </figure>
@@ -69,9 +69,9 @@
 Reviewing the incident context ensures the alert is not analysed in isolation and helps identify correlated activity.
  </p>  
       <img src="../assets/img/Incident_Page.png" 
-           alt="Wireshark capture of encrypted POST packet"
+           alt="Attack severity and timeline context"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-      <figcaption>Figure 2: Incident overview showing attack severity and timeline context.</figcaption>
+      <figcaption>Figure 2: Incident overview showing attack severity and timeline.</figcaption>
     </figure>
 
     <p>
@@ -80,7 +80,7 @@ Reviewing the incident context ensures the alert is not analysed in isolation an
 
     <figure>
       <img src="../assets/img/Alert_Assign.png" 
-           alt="Wireshark showing decrypted POST request"
+           alt="Incident assignment and classification"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
       <figcaption>Figure 3: Incident assignment and classification after initial triage.</figcaption>
     </figure>
@@ -101,27 +101,26 @@ IP enrichment is critical in assessing whether authentication attempts originate
 
     <figure>
       <img src="../assets/img/IP_details.png" 
-           alt="Wireshark showing decrypted POST request"
+           alt="IP address data"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
-      <figcaption>Figure 4: IP address data  showing geolocation, ASN, reputation, and correlated alert activity.</figcaption>
+      <figcaption>Figure 4: IP address data showing geolocation, ASN, reputation, and correlated alert activity.</figcaption>
     </figure>
 
     <h3>Analysis</h3>
 <ul>
-  <li><strong>Observed behaviour:</strong> A single external IP address generated authentication attempts against one or more <strong>disabled accounts</strong> (error code <code>50057</code>), consistent with account enumeration and credential testing patterns.</li>
+  <li><strong>Observed behaviour:</strong> A single external IP address generated authentication attempts against one or more <strong>disabled accounts</strong> (error code <code>50057</code>), whilst successfully signing into active accounts from the same IP address. Behaviour is consistent with password spraying or credential stuffing attacks.</li>
   <li><strong>Risk:</strong> Repeated sign-in attempts from suspicious infrastructure can indicate <strong>password spraying / credential stuffing</strong>. If successful, this can lead to account takeover, persistence, and potential lateral movement depending on access granted.</li>
   <li><strong>Contextual indicators:</strong> IP enrichment showed high-risk context (geolocation, ASN ownership, reputation scoring) and correlated alert activity, increasing confidence that the activity was not routine user behaviour.</li>
-  <li><strong>Limitations:</strong> This investigation was performed in a demo environment and raw sign-in telemetry in the <em>Observed in organization</em> view was not available for deeper validation (e.g., confirming successful sign-ins, Conditional Access outcomes, or session correlation).</li>
+  <li><strong>Limitations:</strong> This investigation was performed in a demo environment and raw sign-in telemetry in the <em>Observed in organization</em> tab was not available for deeper validation (e.g. confirming successful sign-ins or session correlation).</li>
   <li><strong>Learning outcome:</strong> Practiced Tier 1 SOC workflow including alert triage, incident scoping, entity pivoting, enrichment analysis, classification, and documentation of findings.</li>
 </ul>
 
 <h3>Defensive Relevance</h3>
 <ul>
   <li>Enforce strong authentication controls (e.g., <strong>MFA</strong>, <strong>Conditional Access</strong>) and block high-risk sign-ins where possible.</li>
-  <li>Review and tune detections for authentication anomalies (disabled account sign-in attempts, repeated failures from a single IP, and unusual geolocations).</li>
-  <li>Implement rate-limiting and lockout policies to reduce effectiveness of password spraying and credential stuffing attacks.</li>
-  <li>Use IP-based controls where appropriate (block known hostile IPs/ASNs) while recognising attackers can rotate infrastructure.</li>
-  <li>Ensure SOC playbooks include containment steps: user password reset, session revocation, and escalation when successful authentication is suspected.</li>
+  <li>Review and tune detections for authentication anomalies (disabled account sign-in attempts, repeated failures from a single IP, and suspicious locations).</li>
+  <li>Implement rate-limiting and lockout policies to reduce the effectiveness of password spraying and credential stuffing attacks.</li>
+  <li>Use IP-based controls where appropriate (block known hostile IPs/ASNs).</li>
 </ul>
 
 <h3>Ethical Context</h3>
