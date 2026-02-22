@@ -110,7 +110,7 @@ IP enrichment is critical in assessing whether authentication attempts originate
 <ul>
   <li><strong>Observed behaviour:</strong> A single external IP address generated authentication attempts against one or more <strong>disabled accounts</strong> (error code <code>50057</code>), whilst successfully signing into active accounts from the same IP address. Behaviour is consistent with password spraying or credential stuffing attacks.</li>
   <li><strong>Risk:</strong> Repeated sign-in attempts from suspicious infrastructure can indicate <strong>password spraying / credential stuffing</strong>. If successful, this can lead to account takeover, persistence, and potential lateral movement depending on access granted.</li>
-  <li><strong>Contextual indicators:</strong> IP enrichment showed high-risk context (geolocation, ASN ownership, reputation scoring) and correlated alert activity, increasing confidence that the activity was not routine user behaviour.</li>
+  <li><strong>Contextual indicators:</strong> IP data showed high-risk attributes (geolocation, ASN ownership, reputation scoring) and correlated alert activity, increasing likelihood that the activity was not routine user behaviour.</li>
   <li><strong>Limitations:</strong> This investigation was performed in a demo environment and raw sign-in telemetry in the <em>Observed in organization</em> tab was not available for deeper validation (e.g. confirming successful sign-ins or session correlation).</li>
   <li><strong>Learning outcome:</strong> Practiced Tier 1 SOC workflow including alert triage, incident scoping, entity pivoting, enrichment analysis, classification, and documentation of findings.</li>
 </ul>
