@@ -21,13 +21,13 @@
 
     <h3>Environment & Threat Model</h3>
 <ul>
-  <li>Platform: <strong>Microsoft Defender XDR / Microsoft Sentinel</strong> (Azure tenant lab environment).</li>
-  <li>Detection method: Built-in analytics rule <strong>"Sign-ins from IPs that attempt sign-ins to disabled accounts"</strong>.</li>
+  <li>Platform: <strong>Microsoft Defender XDR / Microsoft Sentinel</li>
+  <li>Detection method: Built-in analytics rule: "Sign-ins from IPs that attempt sign-ins to disabled accounts".</li>
   <li>Alert severity: <strong>Medium</strong></li>
-  <li>Observed behaviour: External IP generated multiple authentication attempts against <strong>disabled Azure AD accounts</strong>, whilst successfully signing into other active accounts.</li>
+  <li>Observed behaviour: External IP generated multiple authentication attempts against disabled Azure AD accounts, whilst successfully signing into other active accounts.</li>
   <li>Error code observed: <code>50057</code> (User account is disabled).</li>
   <li>Entity investigation performed on source IP address (ASN, geolocation, reputation score, correlated alerts).</li>
-  <li>Threat model assumption: activity may represent <strong>credential stuffing, brute-force, or reconnaissance of valid accounts</strong> from a malicious origin</li>
+  <li>Threat model: activity may represent: credential stuffing or password spraying from a malicious origin</li>
 </ul>
 
 
@@ -35,11 +35,11 @@
 <ul>
   <li>Alert identified within the Microsoft Defender queue and opened for triage.</li>
   <li>Status set to <strong>In Progress</strong> and assigned to analyst to simulate Tier 1 workflow.</li>
-  <li>Reviewed alert metadata, severity, rule description, and associated incident timeline.</li>
-  <li>Examined <strong>Attack Story</strong> and <strong>Incident Graph</strong> to understand alert relationships and any correlations.</li>
-  <li>Pivoted to <strong>source IP address</strong> due to nature of alert.</li>
-  <li>Analysed IP data including <strong>ASN, geolocation, reputation score, and correlated alerts</strong>.</li>
-  <li>Assessed behavioural pattern for indicators of credential stuffing, brute-force or reconnaissance activity.</li>
+  <li>Reviewed alert metadata, severity, rule description and associated incident timeline.</li>
+  <li>Examined Attack Story and Incident Graph to understand alert relationships and any notable correlations.</li>
+  <li>Pivoted to investigating the source IP address due to nature of alert.</li>
+  <li>Analysed IP data including: ASN, geolocation, reputation score, and correlated alerts.</li>
+  <li>Assessed pattern for indicators of credential stuffing, brute-force or password spraying</li>
   <li>Documented findings and applied final classification within the incident record.</li>
 </ul>
 
@@ -55,9 +55,6 @@
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
       <figcaption>Figure 1: MS Defender SOC queue showing Medium severity authentication alert.</figcaption>
     </figure>
-  <p>
-     Upon opening the alert, the investigation was escalated to the incident level to assess overall scope.
-    </p>
    <p>The Incident Overview provided:</p>
   <ul>
   <li>Detection rule logic.</li>
@@ -86,7 +83,7 @@ Reviewing the incident context ensures the alert is not analysed in isolation an
     </figure>
 
     <p>
-      The investigation pivoted to the source IP address associated with the authentication attempts.
+      The investigation pivoted to the source IP address associated with the authentication attempts due to the nature of the alert.
     </p>
    <p> Investigation into the IP address revealed: </p>
   <ul>
@@ -95,9 +92,6 @@ Reviewing the incident context ensures the alert is not analysed in isolation an
   <li>Suspicious reputation score</li>
   <li>Multiple correlated alerts</li>
   </ul>
-<p>
-IP enrichment is critical in assessing whether authentication attempts originate from hostile or anomalous infrastructure.
- </p>  
 
     <figure>
       <img src="../assets/img/IP_details.png" 
@@ -108,19 +102,20 @@ IP enrichment is critical in assessing whether authentication attempts originate
 
     <h3>Analysis</h3>
 <ul>
-  <li><strong>Observed behaviour:</strong> A single external IP address generated authentication attempts against one or more <strong>disabled accounts</strong> (error code <code>50057</code>), whilst successfully signing into active accounts from the same IP address. Behaviour is consistent with password spraying or credential stuffing attacks.</li>
-  <li><strong>Risk:</strong> Repeated sign-in attempts from suspicious infrastructure can indicate <strong>password spraying / credential stuffing</strong>. If successful, this can lead to account takeover, persistence, and potential lateral movement depending on access granted.</li>
+  <li><strong>Observed behaviour:</strong> A single external IP address generated authentication attempts against one or more disabled accounts (error code <code>50057</code>), whilst successfully signing into active accounts from the same IP address. Behaviour is consistent with password spraying or credential stuffing attacks.</li>
+  <li><strong>Risk:</strong> Repeated sign-in attempts from suspicious infrastructure can indicate password spraying / credential stuffing. If successful, this can lead to account compromise and disruption through the disabling of innocent accounts.</li>
   <li><strong>Contextual indicators:</strong> IP data showed high-risk attributes (geolocation, ASN ownership, reputation scoring) and correlated alert activity, increasing likelihood that the activity was not routine user behaviour.</li>
-  <li><strong>Limitations:</strong> This investigation was performed in a demo environment and raw sign-in telemetry in the <em>Observed in organization</em> tab was not available for deeper validation (e.g. confirming successful sign-ins or session correlation).</li>
+  <li><strong>Next steps in investigation:</strong>If session data and successful sign-in data confounded suspicion, the alert would be escalated and the IP address likely blocked from attempting any further sign-ins. </li>
+  <li><strong>Limitations:</strong> This investigation was performed in a demo environment and raw sign-in telemetry in the 'Observed in organization' tab was not available for deeper validation (e.g. confirming successful sign-ins or session correlation).</li>
   <li><strong>Learning outcome:</strong> Practiced Tier 1 SOC workflow including alert triage, incident scoping, entity pivoting, enrichment analysis, classification, and documentation of findings.</li>
 </ul>
 
 <h3>Defensive Relevance</h3>
 <ul>
-  <li>Enforce strong authentication controls (e.g., <strong>MFA</strong>, <strong>Conditional Access</strong>) and block high-risk sign-ins where possible.</li>
-  <li>Review and tune detections for authentication anomalies (disabled account sign-in attempts, repeated failures from a single IP, and suspicious locations).</li>
+  <li>Enforce strong authentication controls via MFA, conditional access and block high-risk sign-ins where possible.</li>
+  <li>Review and tune detections for authentication anomalies (disabled account sign-in attempts, repeated failures from a single IP, suspicious locations).</li>
   <li>Implement rate-limiting and lockout policies to reduce the effectiveness of password spraying and credential stuffing attacks.</li>
-  <li>Use IP-based controls where appropriate (block known hostile IPs/ASNs).</li>
+  <li>Use IP-based controls where appropriate to block known hostile IPs/ASNs..</li>
 </ul>
 
 <h3>Ethical Context</h3>
