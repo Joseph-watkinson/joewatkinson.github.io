@@ -21,9 +21,9 @@
 
     <h3>Environment & Threat Model</h3>
 <ul>
-  <li>Platform: <strong>Microsoft Defender XDR / Microsoft Sentinel</li>
+  <li>Platform: Microsoft Defender XDR / Microsoft Sentinel</li>
   <li>Detection method: Built-in analytics rule: "Sign-ins from IPs that attempt sign-ins to disabled accounts".</li>
-  <li>Alert severity: <strong>Medium</strong></li>
+  <li>Alert severity: Medium</li>
   <li>Observed behaviour: External IP generated multiple authentication attempts against disabled Azure AD accounts, whilst successfully signing into other active accounts.</li>
   <li>Error code observed: <code>50057</code> (User account is disabled).</li>
   <li>Entity investigation performed on source IP address (ASN, geolocation, reputation score, correlated alerts).</li>
@@ -34,7 +34,7 @@
     <h3>Methodology & Investigation Process</h3>
 <ul>
   <li>Alert identified within the Microsoft Defender queue and opened for triage.</li>
-  <li>Status set to <strong>In Progress</strong> and assigned to analyst to simulate Tier 1 workflow.</li>
+  <li>Status set to In Progress and assigned to analyst to simulate Tier 1 workflow.</li>
   <li>Reviewed alert metadata, severity, rule description and associated incident timeline.</li>
   <li>Examined Attack Story and Incident Graph to understand alert relationships and any notable correlations.</li>
   <li>Pivoted to investigating the source IP address due to nature of alert.</li>
@@ -57,14 +57,12 @@
     </figure>
    <p>The Incident Overview provided:</p>
   <ul>
-  <li>Detection rule logic.</li>
-  <li>Timeline of activity.</li>
-  <li>Incident severity.</li>
-  <li>Entity relationships via Attack Story.</li>
+  <li>Detection rule logic</li>
+  <li>Timeline of activity</li>
+  <li>Incident severity</li>
+  <li>Entity relationships via Attack Story</li>
   </ul>
-<p>
-Reviewing the incident context ensures the alert is not analysed in isolation and helps identify correlated activity.
- </p>  
+   
       <img src="../assets/img/Incident_Page.png" 
            alt="Attack severity and timeline context"
            style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
@@ -72,7 +70,7 @@ Reviewing the incident context ensures the alert is not analysed in isolation an
     </figure>
 
     <p>
-      After initial triage of the incident, the incident was classified as a 'false positive' (due to the its nature as a demo incident) and assigned to an agent.
+      After initial triage of the incident, the incident was classified and assigned to an agent.
     </p>
 
     <figure>
@@ -102,12 +100,12 @@ Reviewing the incident context ensures the alert is not analysed in isolation an
 
     <h3>Analysis</h3>
 <ul>
-  <li><strong>Observed behaviour:</strong> A single external IP address generated authentication attempts against one or more disabled accounts (error code <code>50057</code>), whilst successfully signing into active accounts from the same IP address. Behaviour is consistent with password spraying or credential stuffing attacks.</li>
-  <li><strong>Risk:</strong> Repeated sign-in attempts from suspicious infrastructure can indicate password spraying / credential stuffing. If successful, this can lead to account compromise and disruption through the disabling of innocent accounts.</li>
-  <li><strong>Contextual indicators:</strong> IP data showed suspicious attributes (geolocation, ASN ownership, reputation scoring) and correlated alert activity, increasing likelihood that the activity was not simple routine user behaviour.</li>
-  <li><strong>Next steps in investigation:</strong>If data and successful sign-in data further suspicion, the alert would be escalated and the IP address likely blocked from attempting any further sign-ins. </li>
-  <li><strong>Limitations:</strong> This investigation was performed in a demo environment and raw sign-in data in the 'Observed in organization' tab was not available for deeper validation (e.g. confirming successful sign-ins or session correlation).</li>
-  <li><strong>Learning outcome:</strong> investigated Tier 1 SOC workflow including alert triage, incident scoping, analysis, classification and documentation of findings.</li>
+  <li>Observed behaviour: A single external IP address generated authentication attempts against one or more disabled accounts (error code <code>50057</code>), whilst successfully signing into active accounts from the same IP address. Behaviour is consistent with password spraying or credential stuffing attacks.</li>
+  <li>Risk: Repeated sign-in attempts from suspicious infrastructure can indicate password spraying / credential stuffing. If successful, this can lead to account compromise and disruption through the disabling of innocent accounts.</li>
+  <li>Contextual indicators: IP data showed suspicious attributes (geolocation, ASN ownership, reputation scoring) and correlated alert activity, increasing likelihood that the activity was not simple routine user behaviour.</li>
+  <li>Next steps in investigation:If data and successful sign-in data further suspicion, the alert would be escalated and the IP address likely blocked from attempting any further sign-ins. </li>
+  <li>Limitations:This investigation was performed in a demo environment and raw sign-in data in the 'Observed in organization' tab was not available for deeper validation (e.g. confirming successful sign-ins or session correlation).</li>
+  <li>Learning outcome:investigated Tier 1 SOC workflow including alert triage, incident scoping, analysis, classification and documentation of findings.</li>
 </ul>
 
 <h3>Defensive Relevance</h3>
