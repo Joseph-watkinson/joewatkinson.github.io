@@ -104,10 +104,10 @@ Reviewing the incident context ensures the alert is not analysed in isolation an
 <ul>
   <li><strong>Observed behaviour:</strong> A single external IP address generated authentication attempts against one or more disabled accounts (error code <code>50057</code>), whilst successfully signing into active accounts from the same IP address. Behaviour is consistent with password spraying or credential stuffing attacks.</li>
   <li><strong>Risk:</strong> Repeated sign-in attempts from suspicious infrastructure can indicate password spraying / credential stuffing. If successful, this can lead to account compromise and disruption through the disabling of innocent accounts.</li>
-  <li><strong>Contextual indicators:</strong> IP data showed high-risk attributes (geolocation, ASN ownership, reputation scoring) and correlated alert activity, increasing likelihood that the activity was not routine user behaviour.</li>
-  <li><strong>Next steps in investigation:</strong>If session data and successful sign-in data confounded suspicion, the alert would be escalated and the IP address likely blocked from attempting any further sign-ins. </li>
-  <li><strong>Limitations:</strong> This investigation was performed in a demo environment and raw sign-in telemetry in the 'Observed in organization' tab was not available for deeper validation (e.g. confirming successful sign-ins or session correlation).</li>
-  <li><strong>Learning outcome:</strong> Practiced Tier 1 SOC workflow including alert triage, incident scoping, entity pivoting, enrichment analysis, classification, and documentation of findings.</li>
+  <li><strong>Contextual indicators:</strong> IP data showed suspicious attributes (geolocation, ASN ownership, reputation scoring) and correlated alert activity, increasing likelihood that the activity was not simple routine user behaviour.</li>
+  <li><strong>Next steps in investigation:</strong>If data and successful sign-in data further suspicion, the alert would be escalated and the IP address likely blocked from attempting any further sign-ins. </li>
+  <li><strong>Limitations:</strong> This investigation was performed in a demo environment and raw sign-in data in the 'Observed in organization' tab was not available for deeper validation (e.g. confirming successful sign-ins or session correlation).</li>
+  <li><strong>Learning outcome:</strong> investigated Tier 1 SOC workflow including alert triage, incident scoping, analysis, classification and documentation of findings.</li>
 </ul>
 
 <h3>Defensive Relevance</h3>
