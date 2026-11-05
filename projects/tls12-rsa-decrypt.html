@@ -4,9 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TLS 1.2 RSA Key Exchange Decryption — Project</title>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="TLS 1.2 RSA Key Exchange Decryption — Project" />
+  <meta property="og:description" content="A cyber security project write-up by Joseph Watkinson." />
+  <meta property="og:url" content="https://joseph-watkinson.github.io/joewatkinson.github.io/projects/tls12-rsa-decrypt.html" />
+  <meta property="og:image" content="https://joseph-watkinson.github.io/joewatkinson.github.io/assets/img/og-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body>
+<body class="project-page">
   <header class="nav">
     <div class="brand"><a href="../index.html">← Portfolio</a></div>
   </header>
@@ -45,14 +58,12 @@
     </p>
 
     <figure>
-      <img src="../assets/img/ServerHello.png" 
-           alt="Wireshark capture of TLS 1.2 handshake"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/ServerHello.png" 
+           alt="Wireshark capture of TLS 1.2 handshake">
       <figcaption>Figure 1: TLS 1.2 handshake confirmed in Wireshark through a "Server Hello" packet.</figcaption>
 
-      <img src="../assets/img/CapturedPost.png" 
-           alt="Wireshark capture of encrypted POST packet"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/CapturedPost.png" 
+           alt="Wireshark capture of encrypted POST packet">
       <figcaption>Figure 2: Encrypted POST packet found using HTTP filter.</figcaption>
     </figure>
 
@@ -62,9 +73,8 @@
     </p>
 
     <figure>
-      <img src="../assets/img/PrivateKeyImport.png" 
-           alt="Wireshark showing decrypted POST request"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/PrivateKeyImport.png" 
+           alt="Wireshark showing decrypted POST request">
       <figcaption>Figure 3: The server’s private key was imported into Wireshark.</figcaption>
     </figure>
 
@@ -76,9 +86,8 @@
     </p>
 
     <figure>
-      <img src="../assets/img/DecryptedPost.png" 
-           alt="Wireshark showing decrypted POST request"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/DecryptedPost.png" 
+           alt="Wireshark showing decrypted POST request">
       <figcaption>Figure 4: Decrypted POST request showing recovered login credentials.</figcaption>
     </figure>
 
@@ -107,5 +116,6 @@
   <footer class="footer">
     <small>Designed &amp; coded by me.</small>
   </footer>
+  <script src="../js/lightbox.js"></script>
 </body>
 </html>

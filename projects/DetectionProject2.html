@@ -4,9 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Reconnaissance & Vulnerability Scanning — Project</title>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Reconnaissance & Vulnerability Scanning — Project" />
+  <meta property="og:description" content="A cyber security project write-up by Joseph Watkinson." />
+  <meta property="og:url" content="https://joseph-watkinson.github.io/joewatkinson.github.io/projects/DetectionProject2.html" />
+  <meta property="og:image" content="https://joseph-watkinson.github.io/joewatkinson.github.io/assets/img/og-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body>
+<body class="project-page">
   <header class="nav">
     <div class="brand"><a href="../index.html">← Portfolio</a></div>
   </header>
@@ -39,19 +52,16 @@
     </p>
 
     <figure>
-      <img src="../assets/img/TLSSetup.png"
-           alt="TLS configuration of the target Webserver"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/TLSSetup.png"
+           alt="TLS configuration of the target Webserver">
       <figcaption>Figure 1: TLS configuration of the target Webserver.</figcaption>
 
-      <img src="../assets/img/LoginPHP.png"
-           alt="PHP configured for the login form login.php"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/LoginPHP.png"
+           alt="PHP configured for the login form login.php">
       <figcaption>Figure 2: PHP configured for the login form <code>login.php</code>.</figcaption>
 
-      <img src="../assets/img/WebserverPage.png"
-           alt="Webserver hosted page"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/WebserverPage.png"
+           alt="Webserver hosted page">
       <figcaption>Figure 3: The hosted webserver page.</figcaption>
     </figure>
 
@@ -67,41 +77,36 @@
     <p><strong>Service Discovery:</strong> Nmap confirmed that the target hosted HTTP and HTTPS. An initial scan identified Nginx on ports 80 and 443.</p>
 
     <figure>
-      <img src="../assets/img/NMAPScan.png"
-           alt="Nmap scan showing nginx on port 80/443"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/NMAPScan.png"
+           alt="Nmap scan showing nginx on port 80/443">
       <figcaption>Figure 4: Nmap scan showing nginx on ports 80 and 443.</figcaption>
     </figure>
 
     <p><strong>TLS Enumeration:</strong> Using Nmap’s <code>ssl-enum-ciphers</code> script, the server was found to be configured with TLS 1.2</p>
 
     <figure>
-      <img src="../assets/img/NMAPTLS.png"
-           alt="Nmap TLS enumeration showing TLS 1.2 only"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/NMAPTLS.png"
+           alt="Nmap TLS enumeration showing TLS 1.2 only">
       <figcaption>Figure 5: Nmap TLS enumeration showing TLS 1.2.</figcaption>
     </figure>
 
     <p><strong>Nikto Scan:</strong> Generated hundreds of GET requests, probing for common files and directories. Discovered the deliberately placed PHP login page.</p>
 
     <figure>
-      <img src="../assets/img/NiktoScan.png"
-           alt="Nikto identifying login.php"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/NiktoScan.png"
+           alt="Nikto identifying login.php">
       <figcaption>Figure 6: Nikto identifying the login.php file.</figcaption>
     </figure>
 
     <p><strong>Network Capture:</strong> To demonstrate defender visibility, I ran tcpdump on the webserver while re-running Nikto. Wireshark showed the resulting flood of requests.</p>
 
     <figure>
-      <img src="../assets/img/TCPDUMP.png"
-           alt="TCPdump capture on attacker desktop"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/TCPDUMP.png"
+           alt="TCPdump capture on attacker desktop">
       <figcaption>Figure 7: tcpdump initiated on attacker desktop.</figcaption>
 
-      <img src="../assets/img/NiktoMass.png"
-           alt="Wireshark capture of Nikto traffic"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/NiktoMass.png"
+           alt="Wireshark capture of Nikto traffic">
       <figcaption>Figure 8: Wireshark capture of Nikto traffic flood.</figcaption>
     </figure>
 
@@ -136,5 +141,6 @@
   <footer class="footer">
     <small>Designed &amp; coded by me.</small>
   </footer>
+  <script src="../js/lightbox.js"></script>
 </body>
 </html>

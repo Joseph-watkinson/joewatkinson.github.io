@@ -1,110 +1,309 @@
-<!doctype html> 
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Joseph Watkinson — Cyber Security Portfolio</title>
+  <title>Joseph Watkinson | Cyber Security Portfolio</title>
+  <meta name="description" content="Cyber security projects by Joseph Watkinson: incident triage, TLS decryption, attack detection and vulnerability scanning." />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Joseph Watkinson | Cyber Security Portfolio" />
+  <meta property="og:description" content="Cyber security projects by Joseph Watkinson: incident triage, TLS decryption, attack detection and vulnerability scanning." />
+  <meta property="og:url" content="https://joseph-watkinson.github.io/joewatkinson.github.io/" />
+  <meta property="og:image" content="https://joseph-watkinson.github.io/joewatkinson.github.io/assets/img/og-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <header class="nav">
-    <div class="brand">Joseph Watkinson</div>
+    <div class="brand"><a href="#top">Joseph Watkinson</a></div>
     <nav>
+      <a href="#about">About</a>
       <a href="#projects">Projects</a>
       <a href="#contact">Contact</a>
     </nav>
   </header>
 
-  <section id="projects" class="section">
-  <h2>My Projects</h2>
-  <div class="grid">
+  <main id="top">
+    <div class="hero-band">
+      <svg class="netmap" viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <line class="link" x1="642" y1="98" x2="747" y2="176"/>
+      <line class="link" x1="642" y1="98" x2="549" y2="104"/>
+      <line class="link" x1="907" y1="58" x2="824" y2="53"/>
+      <line class="link" x1="907" y1="58" x2="971" y2="170"/>
+      <line class="link" x1="814" y1="210" x2="898" y2="214"/>
+      <line class="link" x1="814" y1="210" x2="747" y2="176"/>
+      <line class="link" x1="814" y1="210" x2="757" y2="272"/>
+      <line class="link" x1="427" y1="284" x2="412" y2="367"/>
+      <line class="link" x1="427" y1="284" x2="462" y2="209"/>
+      <line class="link" x1="437" y1="67" x2="480" y2="136"/>
+      <line class="link" x1="437" y1="67" x2="403" y2="165"/>
+      <line class="link" x1="724" y1="450" x2="630" y2="444"/>
+      <line class="link" x1="724" y1="450" x2="805" y2="475"/>
+      <line class="link" x1="724" y1="450" x2="764" y2="365"/>
+      <line class="link" x1="724" y1="450" x2="692" y2="368"/>
+      <line class="link" x1="480" y1="136" x2="549" y2="104"/>
+      <line class="link" x1="480" y1="136" x2="462" y2="209"/>
+      <line class="link" x1="480" y1="136" x2="403" y2="165"/>
+      <line class="link" x1="480" y1="136" x2="539" y2="186"/>
+      <line class="link" x1="888" y1="513" x2="805" y2="475"/>
+      <line class="link" x1="888" y1="513" x2="909" y2="436"/>
+      <line class="link" x1="1171" y1="44" x2="1075" y2="171"/>
+      <line class="link" x1="1171" y1="44" x2="1051" y2="104"/>
+      <line class="link" x1="1075" y1="171" x2="1051" y2="104"/>
+      <line class="link" x1="1075" y1="171" x2="1155" y2="253"/>
+      <line class="link" x1="1075" y1="171" x2="1061" y2="269"/>
+      <line class="link" x1="630" y1="444" x2="590" y2="380"/>
+      <line class="link" x1="630" y1="444" x2="558" y2="515"/>
+      <line class="link" x1="526" y1="322" x2="515" y2="421"/>
+      <line class="link" x1="526" y1="322" x2="590" y2="380"/>
+      <line class="link" x1="898" y1="214" x2="971" y2="170"/>
+      <line class="link" x1="898" y1="214" x2="876" y2="283"/>
+      <line class="link" x1="824" y1="53" x2="747" y2="176"/>
+      <line class="link" x1="634" y1="324" x2="692" y2="368"/>
+      <line class="link" x1="634" y1="324" x2="590" y2="380"/>
+      <line class="link" x1="747" y1="176" x2="698" y2="227"/>
+      <line class="link" x1="1023" y1="383" x2="943" y2="329"/>
+      <line class="link" x1="1023" y1="383" x2="1088" y2="435"/>
+      <line class="link" x1="805" y1="475" x2="909" y2="436"/>
+      <line class="link" x1="971" y1="170" x2="1051" y2="104"/>
+      <line class="link" x1="971" y1="170" x2="988" y2="269"/>
+      <line class="link" x1="412" y1="367" x2="401" y2="475"/>
+      <line class="link" x1="943" y1="329" x2="988" y2="269"/>
+      <line class="link" x1="943" y1="329" x2="876" y2="283"/>
+      <line class="link" x1="1060" y1="511" x2="1088" y2="435"/>
+      <line class="link" x1="1060" y1="511" x2="1139" y2="534"/>
+      <line class="link" x1="764" y1="365" x2="692" y2="368"/>
+      <line class="link" x1="606" y1="236" x2="698" y2="227"/>
+      <line class="link" x1="606" y1="236" x2="539" y2="186"/>
+      <line class="link" x1="1152" y1="379" x2="1088" y2="435"/>
+      <line class="link" x1="1152" y1="379" x2="1182" y2="453"/>
+      <line class="link" x1="698" y1="227" x2="757" y2="272"/>
+      <line class="link" x1="549" y1="104" x2="539" y2="186"/>
+      <line class="link" x1="462" y1="209" x2="403" y2="165"/>
+      <line class="link" x1="462" y1="209" x2="539" y2="186"/>
+      <line class="link" x1="401" y1="475" x2="486" y2="493"/>
+      <line class="link" x1="515" y1="421" x2="590" y2="380"/>
+      <line class="link" x1="515" y1="421" x2="486" y2="493"/>
+      <line class="link" x1="1155" y1="253" x2="1061" y2="269"/>
+      <line class="link" x1="1139" y1="534" x2="1182" y2="453"/>
+      <line class="link" x1="1061" y1="269" x2="988" y2="269"/>
+      <line class="link" x1="486" y1="493" x2="558" y2="515"/>
+      <path class="path" fill="none" d="M757 272 L814 210 L898 214 L971 170 L1051 104 L1075 171 L1155 253"/>
+      <circle class="node" cx="642" cy="98" r="3"/>
+      <circle class="node" cx="907" cy="58" r="3"/>
+      <circle class="hit" cx="814" cy="210" r="4"/>
+      <circle class="node" cx="427" cy="284" r="3"/>
+      <circle class="node" cx="437" cy="67" r="3"/>
+      <circle class="node" cx="724" cy="450" r="3"/>
+      <circle class="node" cx="480" cy="136" r="3"/>
+      <circle class="node" cx="888" cy="513" r="3"/>
+      <circle class="node" cx="1171" cy="44" r="3"/>
+      <circle class="hit" cx="1075" cy="171" r="4"/>
+      <circle class="node" cx="630" cy="444" r="3"/>
+      <circle class="node" cx="526" cy="322" r="3"/>
+      <circle class="hit" cx="898" cy="214" r="4"/>
+      <circle class="node" cx="824" cy="53" r="3"/>
+      <circle class="node" cx="634" cy="324" r="3"/>
+      <circle class="node" cx="747" cy="176" r="3"/>
+      <circle class="node" cx="1023" cy="383" r="3"/>
+      <circle class="node" cx="805" cy="475" r="3"/>
+      <circle class="hit" cx="971" cy="170" r="4"/>
+      <circle class="node" cx="412" cy="367" r="3"/>
+      <circle class="node" cx="943" cy="329" r="3"/>
+      <circle class="node" cx="1060" cy="511" r="3"/>
+      <circle class="node" cx="764" cy="365" r="3"/>
+      <circle class="node" cx="692" cy="368" r="3"/>
+      <circle class="node" cx="606" cy="236" r="3"/>
+      <circle class="node" cx="1152" cy="379" r="3"/>
+      <circle class="node" cx="1088" cy="435" r="3"/>
+      <circle class="node" cx="698" cy="227" r="3"/>
+      <circle class="node" cx="549" cy="104" r="3"/>
+      <circle class="node" cx="462" cy="209" r="3"/>
+      <circle class="node" cx="401" cy="475" r="3"/>
+      <circle class="hit" cx="757" cy="272" r="4"/>
+      <circle class="hit" cx="1051" cy="104" r="4"/>
+      <circle class="node" cx="515" cy="421" r="3"/>
+      <circle class="node" cx="403" cy="165" r="3"/>
+      <circle class="node" cx="590" cy="380" r="3"/>
+      <circle class="hit" cx="1155" cy="253" r="4"/>
+      <circle class="node" cx="1139" cy="534" r="3"/>
+      <circle class="node" cx="1061" cy="269" r="3"/>
+      <circle class="node" cx="909" cy="436" r="3"/>
+      <circle class="node" cx="988" cy="269" r="3"/>
+      <circle class="node" cx="486" cy="493" r="3"/>
+      <circle class="node" cx="876" cy="283" r="3"/>
+      <circle class="node" cx="558" cy="515" r="3"/>
+      <circle class="node" cx="1182" cy="453" r="3"/>
+      <circle class="node" cx="539" cy="186" r="3"/>
+      <circle class="pulse" cx="1155" cy="253" r="6"/>
+      </svg>
+      <section class="section hero">
+        <div class="hero-text">
+          <h1>Joseph<br />Watkinson</h1>
+          <p class="role">First-Class Cyber Security graduate, working in IT support</p>
+          <p class="statement">I like working out how attacks happen, and how to catch them.</p>
+          <div class="links">
+            <a class="button primary" href="#projects">See my projects</a>
+            <a class="button" href="https://www.linkedin.com/in/joseph-watkinson-b700922a6/">LinkedIn</a>
+            <a class="button" href="https://github.com/Joseph-watkinson">GitHub</a>
+            <a class="button" href="assets/cv/Joseph-Watkinson-CV.pdf">Download CV</a>
+          </div>
+        </div>
+        <!-- To add your photo, save a square image as assets/img/profile.jpg -->
+        <div class="avatar">
+          <img src="assets/img/profile.jpg" alt="Joseph Watkinson" onerror="this.parentElement.classList.add('no-photo')" />
+          <span class="initials" aria-hidden="true">JW</span>
+        </div>
+      </section>
+    </div>
 
-    <a class="card" href="projects/tls12-rsa-decrypt.html">
-      <div class="card-image">
-        <img src="assets/img/CapturedPost.png" alt="TLS 1.2 RSA Decryption demo">
+    <section id="about" class="section about">
+      <div class="section-head">
+        <h2>About</h2>
+        <p>Based in the North West of England.</p>
       </div>
-      <div class="card-text">
-        <h3>Captured credential decryption - TLS 1.2 RSA</h3>
-        <p>Passive MITM attack with server key → plaintext credentials.</p>
-        <ul class="tags">
-        <li>Wireshark</li>
-        <li>TCPdump</li>
-        <li>TLS</li>
-       </ul>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>I graduated with a First in Cyber Security from university in Newcastle. Alongside that I worked on the service desk at Norman Managed Services, an MSP supporting Northumbria University and more than 40 partner institutions around the world.</p>
+          <p>Today I work as an IT support engineer, looking after users, devices and systems day to day. In my own time I build and document security labs like the ones below, because the part of security I enjoy most is investigation: understanding how an attack works and how to spot it.</p>
+          <p>I'm now looking for my first dedicated security role.</p>
+        </div>
+        <dl class="facts">
+          <div><dt>Now</dt><dd>IT Support Engineer</dd></div>
+          <div><dt>Before</dt><dd>Service Desk, Norman Managed Services</dd></div>
+          <div><dt>Education</dt><dd>Cyber Security, First Class Honours</dd></div>
+          <div><dt>Focus</dt><dd>Detection, triage and investigation</dd></div>
+        </dl>
       </div>
-    </a>
-     <a class="card" href="projects/DefenderProject.html">
-      <div class="card-image">
-        <img src="assets/img/Alert_List.png" alt="MS Defender List">
-      </div>
-      <div class="card-text">
-        <h3>Microsoft Defender Incident Triage</h3>
-        <p>Credential Stuffing / Disabled Account Sign-In Investigation.</p>
-        <ul class="tags">
-        <li>Microsoft Defender</li>
-        <li>Incident Triage</li>
-        <li>Investigation</li>
-       </ul>
-      </div>
-    </a>
+    </section>
 
-    <a class="card" href="projects/Hash_Project.html">
-      <div class="card-image">
-        <img src="assets/img/LegitimateHash.png" alt="MITM Attack Detection demo">
+    <section id="projects" class="section">
+      <div class="section-head">
+        <h2>Projects</h2>
+        <p>Hands-on labs, each written up as an investigation.</p>
       </div>
-      <div class="card-text">
-        <h3>MITM Attack Detection</h3>
-        <p>TLS handshakes fingerprinted and hashed with JA3.</p>
-        <ul class="tags">
-        <li>Wireshark</li>
-        <li>Nginx</li>
-        <li>JA3</li> 
+
+      <div class="cases">
+        <a class="case featured" href="projects/DefenderProject.html">
+          <div class="case-shot">
+            <img src="assets/img/Alert_List.png" alt="Microsoft Defender alert queue with a medium severity sign-in alert" />
+          </div>
+          <div class="case-body">
+            <h3>Microsoft Defender incident triage</h3>
+            <p>Investigating sign-in attempts against disabled accounts from a suspicious external IP, and deciding whether it was credential stuffing or a misconfiguration.</p>
+            <p class="tools"><span>Tools:</span> Microsoft Defender XDR, Sentinel, IP reputation</p>
+          </div>
+        </a>
+
+        <a class="case" href="projects/tls12-rsa-decrypt.html">
+          <div class="case-shot">
+            <img loading="lazy" src="assets/img/CapturedPost.png" alt="Captured HTTPS POST request in Wireshark" />
+          </div>
+          <div class="case-body">
+            <h3>Decrypting captured TLS 1.2 credentials</h3>
+            <p>A passive man-in-the-middle with the server's RSA key turns recorded HTTPS traffic back into plaintext logins.</p>
+            <p class="tools"><span>Tools:</span> Wireshark, tcpdump, nginx</p>
+          </div>
+        </a>
+
+        <a class="case" href="projects/Hash_Project.html">
+          <div class="case-shot">
+            <img loading="lazy" src="assets/img/LegitimateHash.png" alt="JA3 fingerprint of a legitimate TLS client" />
+          </div>
+          <div class="case-body">
+            <h3>Detecting a man-in-the-middle with JA3</h3>
+            <p>Fingerprinting TLS handshakes so an attacker's client stands out from legitimate traffic.</p>
+            <p class="tools"><span>Tools:</span> Wireshark, nginx, JA3</p>
+          </div>
+        </a>
+
+        <a class="case" href="projects/DetectionProject2.html">
+          <div class="case-shot">
+            <img loading="lazy" src="assets/img/NMAPTLS.png" alt="Nmap scan output listing TLS details" />
+          </div>
+          <div class="case-body">
+            <h3>Reconnaissance and vulnerability scanning</h3>
+            <p>Mapping a self-hosted web server, finding its weaknesses and fixing them.</p>
+            <p class="tools"><span>Tools:</span> Nmap, Nikto, Gobuster</p>
+          </div>
+        </a>
+
+        <a class="case" href="projects/PrivEsc_Project3.html">
+          <div class="case-shot">
+            <img loading="lazy" src="assets/img/AtkThumb.png" alt="Terminal showing an attacker gaining a root shell" />
+          </div>
+          <div class="case-body">
+            <span class="status">Write-up in progress</span>
+            <h3>Linux privilege escalation through SUID</h3>
+            <p>Getting from a low-privilege user to root through a misconfigured SUID binary.</p>
+            <p class="tools"><span>Tools:</span> Linux, SUID binaries</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section id="contact" class="section contact">
+      <div class="section-head">
+        <h2>Contact</h2>
+        <p>Open to security analyst roles.</p>
+      </div>
+      <div class="contact-panel">
+        <div class="contact-main">
+          <h3>Get in touch</h3>
+          <p>Email is the quickest way to reach me. I'm happy to talk about roles, my projects or anything security related.</p>
+          <div class="email-row">
+            <a class="email" href="mailto:Josephwatkinson2003@gmail.com">Josephwatkinson2003@gmail.com</a>
+            <button class="copy-btn" type="button" data-copy="Josephwatkinson2003@gmail.com">Copy email</button>
+          </div>
+        </div>
+        <ul class="channels">
+          <li>
+            <a href="https://www.linkedin.com/in/joseph-watkinson-b700922a6/">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.1c0-1.22-.02-2.78-1.7-2.78-1.7 0-1.96 1.33-1.96 2.7V21h-4z"/></svg>
+              <span><strong>LinkedIn</strong><small>Connect or send me a message</small></span>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/Joseph-watkinson">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.56 9.56 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+              <span><strong>GitHub</strong><small>See my repositories</small></span>
+            </a>
+          </li>
+          <li>
+            <a href="assets/cv/Joseph-Watkinson-CV.pdf">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm7 1.5V9h5.5zM11 11v5.17l-2.09-2.08-1.41 1.41L12 20l4.5-4.5-1.41-1.41L13 16.17V11z"/></svg>
+              <span><strong>Download CV</strong><small>PDF download</small></span>
+            </a>
+          </li>
         </ul>
       </div>
-    </a>
-
-    <a class="card" href="projects/DetectionProject2.html">
-      <div class="card-image">
-        <img src="assets/img/NMAPTLS.png" alt="Vulnerability scanning demo">
-      </div>
-      <div class="card-text">
-        <h3>Information Gathering & Vulnerability Scanning</h3>
-        <p>Performed scans using Nmap & Nikto</p>
-        <ul class="tags">
-        <li>Nmap</li>
-        <li>Nikto</li>
-        <li>Gobuster</li>
-        </ul>
-      </div>
-    </a>
-
-    <a class="card" href="projects/PrivEsc_Project3.html">
-      <div class="card-image">
-        <img src="assets/img/AtkThumb.png" alt="TLS 1.3 Forward Secrecy demo">
-      </div>
-      <div class="card-text">
-        <h3>Attacker Privilege-Escalation</h3>
-        <p>ECDHE prevents post-compromise decryption.</p>
-        <ul class="tags">
-        <li>Linux</li>
-        <li>Privilege Escalation</li>
-        <li>SUID</li>
-       </ul>
-      </div>
-    </a>
-
-  </div>
-</section>
-
-
-  <section id="contact" class="section">
-    <h2>Contact</h2>
-    <p>Email: <a href="mailto:Josephwatkinson2003@gmail.com">Josephwatkinson2003@gmail.com</a></p>
-    <p><a href="https://www.linkedin.com/in/joseph-watkinson-b700922a6/">LinkedIn</a> | <a href="https://github.com/Joseph-watkinson">GitHub</a></p>
-  </section>
+      <script>
+        document.querySelectorAll('.copy-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var text = btn.getAttribute('data-copy');
+            var done = function () {
+              btn.textContent = 'Copied';
+              btn.classList.add('copied');
+              setTimeout(function () { btn.textContent = 'Copy email'; btn.classList.remove('copied'); }, 2000);
+            };
+            if (navigator.clipboard) {
+              navigator.clipboard.writeText(text).then(done, function () { btn.textContent = 'Copy failed'; });
+            }
+          });
+        });
+      </script>
+    </section>
+  </main>
 
   <footer class="footer">
-    <small>© <span id="y"></span> Joseph Watkinson — Designed & coded by me.</small>
+    <small>© <span id="y">2026</span> Joseph Watkinson. Designed and built by me.</small>
     <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
   </footer>
 </body>

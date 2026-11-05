@@ -4,9 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Microsoft Defender - Disabled Account Sign-In Investigation</title>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Microsoft Defender - Disabled Account Sign-In Investigation" />
+  <meta property="og:description" content="A cyber security project write-up by Joseph Watkinson." />
+  <meta property="og:url" content="https://joseph-watkinson.github.io/joewatkinson.github.io/projects/DefenderProject.html" />
+  <meta property="og:image" content="https://joseph-watkinson.github.io/joewatkinson.github.io/assets/img/og-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body>
+<body class="project-page">
   <header class="nav">
     <div class="brand"><a href="../index.html">← Portfolio</a></div>
   </header>
@@ -50,9 +63,8 @@
     </p>
 
     <figure>
-      <img src="../assets/img/Alert_List.png" 
-           alt="Medium severity authentication alert"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/Alert_List.png" 
+           alt="Medium severity authentication alert">
       <figcaption>Figure 1: MS Defender SOC queue showing Medium severity authentication alert.</figcaption>
     </figure>
    <p>The Incident Overview provided:</p>
@@ -62,10 +74,10 @@
   <li>Incident severity</li>
   <li>Entity relationships via Attack Story</li>
   </ul>
-   
-      <img src="../assets/img/Incident_Page.png" 
-           alt="Attack severity and timeline context"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+
+    <figure>
+      <img loading="lazy" src="../assets/img/Incident_Page.png" 
+           alt="Attack severity and timeline context">
       <figcaption>Figure 2: Incident overview showing attack severity and timeline.</figcaption>
     </figure>
 
@@ -74,9 +86,8 @@
     </p>
 
     <figure>
-      <img src="../assets/img/Alert_Assign.png" 
-           alt="Incident assignment and classification"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/Alert_Assign.png" 
+           alt="Incident assignment and classification">
       <figcaption>Figure 3: Incident assignment and classification after initial triage.</figcaption>
     </figure>
 
@@ -92,9 +103,8 @@
   </ul>
 
     <figure>
-      <img src="../assets/img/IP_details.png" 
-           alt="IP address data"
-           style="width:100%;max-width:900px;border:1px solid #30363d;border-radius:8px;">
+      <img loading="lazy" src="../assets/img/IP_details.png" 
+           alt="IP address data">
       <figcaption>Figure 4: IP address data showing geolocation, ASN, reputation, and correlated alert activity.</figcaption>
     </figure>
 
@@ -127,5 +137,6 @@
   <footer class="footer">
     <small>Designed &amp; coded by me.</small>
   </footer>
+  <script src="../js/lightbox.js"></script>
 </body>
 </html>
