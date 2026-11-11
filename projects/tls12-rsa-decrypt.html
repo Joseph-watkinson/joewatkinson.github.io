@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TLS 1.2 RSA Key Exchange Decryption — Project</title>
+  <title>Decrypting captured TLS 1.2 credentials | Joseph Watkinson</title>
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="TLS 1.2 RSA Key Exchange Decryption — Project" />
+  <meta property="og:title" content="Decrypting captured TLS 1.2 credentials | Joseph Watkinson" />
   <meta property="og:description" content="A cyber security project write-up by Joseph Watkinson." />
   <meta property="og:url" content="https://joseph-watkinson.github.io/joewatkinson.github.io/projects/tls12-rsa-decrypt.html" />
   <meta property="og:image" content="https://joseph-watkinson.github.io/joewatkinson.github.io/assets/img/og-card.png" />
@@ -25,92 +25,74 @@
   </header>
 
   <section class="section">
-    <h1>TLS 1.2 RSA Key Exchange Decryption</h1>
+    <h1>Decrypting captured TLS 1.2 credentials</h1>
 
-    <h3>Objective</h3>
+    <dl class="summary">
+      <div><dt>What I did</dt><dd>Captured an HTTPS login between two VMs, then decrypted it afterwards using the server's private key.</dd></div>
+      <div><dt>Tools</dt><dd>tcpdump, Wireshark, nginx</dd></div>
+      <div><dt>Outcome</dt><dd>Recovered the username and password in plaintext, showing why RSA key exchange without forward secrecy is a risk.</dd></div>
+    </dl>
+
+    <h2>Objective</h2>
     <p>
-      Demonstrate how TLS&nbsp;1.2 sessions configured with RSA key exchange are
-      vulnerable if a server’s private key is compromised. Because RSA does not
-      provide forward secrecy, previously recorded traffic can be decrypted
-      after the fact.
+      To show how TLS&nbsp;1.2 sessions using RSA key exchange are vulnerable if the server's private key is compromised. Because RSA key exchange doesn't provide forward secrecy, traffic recorded earlier can be decrypted after the fact.
     </p>
 
-    <h3>Environment & Threat Model</h3>
+    <h2>Environment &amp; Threat Model</h2>
     <ul>
-      <li>Three VMs: <strong>client</strong>, <strong>attacker</strong>, <strong>nginx webserver</strong> (self-signed certificate).</li>
+      <li>Three VMs: a <strong>client</strong>, an <strong>attacker</strong> and an <strong>nginx webserver</strong> with a self-signed certificate.</li>
       <li>Webserver restricted to TLS&nbsp;1.2 RSA cipher suites only.</li>
-      <li>Client submitted login credentials over HTTPS.</li>
-      <li>Attacker captured traffic with <code>tcpdump</code>.</li>
-      <li>Threat model assumption: attacker has access to the server’s private key.</li>
+      <li>Threat model: the attacker can capture traffic on the network and has got hold of the server's private key.</li>
     </ul>
 
-    <h3>Methodology & Process</h3>
+    <h2>Method</h2>
+
+    <h3>Capturing the login</h3>
     <p>
-      Three VMs were configured: a client, an attacker, and an nginx webserver
-      with a self-signed certificate. The server was restricted to RSA cipher
-      suites under TLS 1.2. The client logged into a simple HTTPS form hosted by
-      the webserver, while the attacker monitored traffic with tcpdump.
+      The client logged into a simple HTTPS login form on the webserver while I captured the traffic from the attacker VM with tcpdump, saving it as a <code>.pcap</code> to analyse in Wireshark.
     </p>
 
+    <h3>Decrypting with the private key</h3>
     <p>
-      Traffic was captured with tcpdump and saved as a <code>.pcap</code>. In
-      Wireshark, HTTP filters confirmed TLS 1.2 with RSA.
+      Without the key, Wireshark could only show the login as encrypted TLS application data. I then added the webserver's private key to Wireshark's TLS settings against the server's IP and port 443.
     </p>
-
     <figure>
-      <img loading="lazy" src="../assets/img/ServerHello.png" 
-           alt="Wireshark capture of TLS 1.2 handshake">
-      <figcaption>Figure 1: TLS 1.2 handshake confirmed in Wireshark through a "Server Hello" packet.</figcaption>
+      <img loading="lazy" src="../assets/img/PrivateKeyImport.png" alt="Wireshark RSA key list with the server key added">
+      <figcaption>Figure 1: The server's private key added to Wireshark's RSA keys list.</figcaption>
+    </figure>
+    <p>
+      This step only works because the connection used RSA key exchange. With ECDHE, the session keys never cross the wire encrypted with the server's key, so the private key alone can't decrypt anything.
+    </p>
 
-      <img loading="lazy" src="../assets/img/CapturedPost.png" 
-           alt="Wireshark capture of encrypted POST packet">
-      <figcaption>Figure 2: Encrypted POST packet found using HTTP filter.</figcaption>
+    <h2>Results</h2>
+    <p>
+      With the key loaded, Wireshark decrypted the session and the login request appeared as normal HTTP, including the username and password in plaintext.
+    </p>
+    <figure>
+      <img loading="lazy" src="../assets/img/CapturedPost.png" alt="Decrypted POST request to login.php in Wireshark">
+      <figcaption>Figure 2: After decryption, the POST to <code>/login.php</code> shows up as HTTP, with a "Decrypted TLS" tab at the bottom.</figcaption>
+    </figure>
+    <figure>
+      <img loading="lazy" src="../assets/img/DecryptedPost.png" alt="Decrypted form data showing the login credentials">
+      <figcaption>Figure 3: The recovered login credentials in the decrypted form data.</figcaption>
     </figure>
 
-    <p>
-      The webserver’s private key was then imported into Wireshark and applied
-      to the encrypted POST packet.
-    </p>
-
-    <figure>
-      <img loading="lazy" src="../assets/img/PrivateKeyImport.png" 
-           alt="Wireshark showing decrypted POST request">
-      <figcaption>Figure 3: The server’s private key was imported into Wireshark.</figcaption>
-    </figure>
-
-    <h3>Results</h3>
-    <p>
-      Importing the server’s private key into Wireshark enabled decryption of
-      the POST packet. Subsequently, the HTTP POST request, including plaintext
-      username and password, was successfully recovered.
-    </p>
-
-    <figure>
-      <img loading="lazy" src="../assets/img/DecryptedPost.png" 
-           alt="Wireshark showing decrypted POST request">
-      <figcaption>Figure 4: Decrypted POST request showing recovered login credentials.</figcaption>
-    </figure>
-
-    <h3>Analysis</h3>
+    <h2>Analysis</h2>
     <ul>
-      <li><strong>Risk:</strong> RSA key exchange allows an attacker with the private key to retroactively decrypt all previously recorded sessions.</li>
-      <li><strong>Limitations:</strong> This scenario is relevant only where RSA cipher suites are enabled. Most modern servers use ECDHE/DHE with forward secrecy.</li>
-      <li><strong>Learning outcome:</strong> Configuring a lab, capturing and analyzing encrypted traffic, and applying cryptographic knowledge in practice.</li>
+      <li><strong>Risk:</strong> with RSA key exchange, anyone holding the private key can decrypt every session they've recorded, however long ago it was captured.</li>
+      <li><strong>Limitations:</strong> this only applies where RSA cipher suites are still enabled. Most modern servers use ECDHE, and TLS&nbsp;1.3 removed RSA key exchange altogether. Forward secrecy also only protects recorded traffic. A stolen key would still let an attacker impersonate the server going forward.</li>
+      <li><strong>Learning outcome:</strong> built the lab, captured and analysed encrypted traffic, and put the cryptography into practice.</li>
     </ul>
 
-    <h3>Defensive Relevance</h3>
+    <h2>Defensive Relevance</h2>
     <ul>
-      <li>Disable RSA-based cipher suites and enforce forward-secret ciphers such as ECDHE.</li>
-      <li>Audit TLS configurations to ensure strong ciphers are enforced.</li>
-      <li>Recognize that if a private key leaks, all previously captured traffic is compromised.</li>
+      <li>Disable RSA key exchange and only allow forward secret cipher suites such as ECDHE, or move to TLS&nbsp;1.3.</li>
+      <li>Audit TLS configurations regularly. Nmap's <code>ssl-enum-ciphers</code> script flags this exact issue, as shown in my <a href="DetectionProject2.html">reconnaissance project</a>.</li>
+      <li>Treat a leaked private key as exposing all traffic captured with it, and revoke and reissue the certificate straight away.</li>
     </ul>
 
-    <h3>Ethical Context</h3>
-    <p>
-      This exercise was conducted entirely in a self-controlled lab environment
-      for educational purposes. No external systems were targeted.
-    </p>
-
+    <h2>Ethical Context</h2>
+    <p>Carried out entirely in my own lab. No external systems were targeted.</p>
   </section>
 
   <footer class="footer">
