@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reconnaissance & Vulnerability Scanning — Project</title>
+  <title>Reconnaissance and vulnerability scanning | Joseph Watkinson</title>
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Reconnaissance & Vulnerability Scanning — Project" />
+  <meta property="og:title" content="Reconnaissance and vulnerability scanning | Joseph Watkinson" />
   <meta property="og:description" content="A cyber security project write-up by Joseph Watkinson." />
   <meta property="og:url" content="https://joseph-watkinson.github.io/joewatkinson.github.io/projects/DetectionProject2.html" />
   <meta property="og:image" content="https://joseph-watkinson.github.io/joewatkinson.github.io/assets/img/og-card.png" />
@@ -25,117 +25,126 @@
   </header>
 
   <section class="section">
-    <h1>Reconnaissance & Vulnerability Scanning</h1>
+    <h1>Reconnaissance and vulnerability scanning</h1>
 
-    <h3>Objective</h3>
+    <dl class="summary">
+      <div><dt>What I did</dt><dd>Scanned my own nginx webserver with Nmap, Nikto and Gobuster, then captured the scan traffic to see how it looks to a defender.</dd></div>
+      <div><dt>Tools</dt><dd>Nmap, Nikto, Gobuster, tcpdump, Wireshark</dd></div>
+      <div><dt>Outcome</dt><dd>The most important finding was that the server only offered RSA key exchange, so none of its HTTPS traffic had forward secrecy. Nikto also found missing security headers and the login page, and the scans were extremely noisy on the wire.</dd></div>
+    </dl>
+
+    <h2>Objective</h2>
     <p>
-      Demonstrate how attackers enumerate services, probe for weaknesses, and
-      brute-force hidden content, while also showing how such scanning appears
-      from the defender’s perspective. The project highlights both offensive
-      discovery and defensive detection.
+      To show how attackers enumerate services, probe for weaknesses and brute-force hidden content, and how that same scanning looks from the defender's side.
     </p>
 
-    <h3>Environment & Threat Model</h3>
+    <h2>Environment &amp; Threat Model</h2>
     <ul>
-      <li>Target: self-configured <strong>Nginx webserver</strong> with HTTPS and a self-signed TLS certificate.</li>
-      <li>Server hosted a simple login page that logged inputs to a PHP file.</li>
-      <li>Attacker machine used <strong>Nmap</strong>, <strong>Nikto</strong>, and <strong>Gobuster</strong>.</li>
-      <li>Traffic captured using <strong>tcpdump</strong> and analysed in Wireshark.</li>
-      <li>Assumption: attacker has network access to the target system.</li>
+      <li>Target: an nginx webserver I configured, with HTTPS using a self-signed certificate and a simple login page that logged inputs to a PHP file.</li>
+      <li>Attacker: a Kali VM with Nmap, Nikto and Gobuster.</li>
+      <li>Traffic captured with tcpdump and analysed in Wireshark.</li>
+      <li>Threat model: the attacker has network access to the target.</li>
     </ul>
 
-    <h3>Methodology & Process</h3>
+    <h2>Method</h2>
+
+    <h3>The target</h3>
+    <figure>
+      <img loading="lazy" src="../assets/img/TLSSetup.png" alt="nginx TLS configuration">
+      <figcaption>Figure 1: TLS configuration of the target webserver.</figcaption>
+    </figure>
+    <figure>
+      <img loading="lazy" src="../assets/img/LoginPHP.png" alt="PHP handling the login form">
+      <figcaption>Figure 2: The PHP behind the login form, <code>login.php</code>.</figcaption>
+    </figure>
+    <figure>
+      <img loading="lazy" src="../assets/img/WebserverPage.png" alt="The hosted web page">
+      <figcaption>Figure 3: The hosted web page.</figcaption>
+    </figure>
+
+    <h3>Service discovery</h3>
+    <p>I started by checking which services were exposed:</p>
+    <pre><code>nmap -sV -p 80,443 192.168.102.128</code></pre>
+    <p>Nmap confirmed nginx 1.24.0 running on port 80 (HTTP) and port 443 (HTTPS).</p>
+    <figure>
+      <img loading="lazy" src="../assets/img/NMAPScan.png" alt="Nmap service scan output">
+      <figcaption>Figure 4: Nmap showing nginx on ports 80 and 443.</figcaption>
+    </figure>
+
+    <h3>TLS enumeration</h3>
+    <p>Next I enumerated the TLS versions and cipher suites on port 443:</p>
+    <pre><code>nmap --script ssl-enum-ciphers -p 443 192.168.102.128</code></pre>
     <p>
-      The target system was an Nginx webserver I configured, hosting HTTPS with
-      a self-signed TLS certificate. The webserver had a simple login page that
-      logged inputs to a PHP file.
+      The server only supported TLS&nbsp;1.2 with a single RSA key exchange cipher suite, <code>TLS_RSA_WITH_AES_128_CBC_SHA</code>, and Nmap warned that forward secrecy wasn't supported by any cipher. That means anyone who got hold of the server's private key could decrypt every HTTPS session ever captured from it, which is exactly the attack I demonstrate in my <a href="tls12-rsa-decrypt.html">TLS decryption project</a>.
     </p>
-
     <figure>
-      <img loading="lazy" src="../assets/img/TLSSetup.png"
-           alt="TLS configuration of the target Webserver">
-      <figcaption>Figure 1: TLS configuration of the target Webserver.</figcaption>
-
-      <img loading="lazy" src="../assets/img/LoginPHP.png"
-           alt="PHP configured for the login form login.php">
-      <figcaption>Figure 2: PHP configured for the login form <code>login.php</code>.</figcaption>
-
-      <img loading="lazy" src="../assets/img/WebserverPage.png"
-           alt="Webserver hosted page">
-      <figcaption>Figure 3: The hosted webserver page.</figcaption>
+      <img loading="lazy" src="../assets/img/NMAPTLS.png" alt="Nmap ssl-enum-ciphers output">
+      <figcaption>Figure 5: Nmap TLS enumeration showing TLS 1.2, an RSA-only cipher suite and the forward secrecy warning.</figcaption>
     </figure>
 
-    <p>
-      The vulnerability scanning workflow began with service discovery to
-      confirm exposed ports, followed by TLS enumeration to determine supported
-      versions and cipher suites. Next, Nikto scanned for misconfigurations and
-      sensitive files, and Gobuster brute-forced hidden directories. Finally,
-      Wireshark was used to observe scanning traffic from the server’s
-      perspective.
-    </p>
-
-    <p><strong>Service Discovery:</strong> Nmap confirmed that the target hosted HTTP and HTTPS. An initial scan identified Nginx on ports 80 and 443.</p>
-
-    <figure>
-      <img loading="lazy" src="../assets/img/NMAPScan.png"
-           alt="Nmap scan showing nginx on port 80/443">
-      <figcaption>Figure 4: Nmap scan showing nginx on ports 80 and 443.</figcaption>
-    </figure>
-
-    <p><strong>TLS Enumeration:</strong> Using Nmap’s <code>ssl-enum-ciphers</code> script, the server was found to be configured with TLS 1.2</p>
-
-    <figure>
-      <img loading="lazy" src="../assets/img/NMAPTLS.png"
-           alt="Nmap TLS enumeration showing TLS 1.2 only">
-      <figcaption>Figure 5: Nmap TLS enumeration showing TLS 1.2.</figcaption>
-    </figure>
-
-    <p><strong>Nikto Scan:</strong> Generated hundreds of GET requests, probing for common files and directories. Discovered the deliberately placed PHP login page.</p>
-
-    <figure>
-      <img loading="lazy" src="../assets/img/NiktoScan.png"
-           alt="Nikto identifying login.php">
-      <figcaption>Figure 6: Nikto identifying the login.php file.</figcaption>
-    </figure>
-
-    <p><strong>Network Capture:</strong> To demonstrate defender visibility, I ran tcpdump on the webserver while re-running Nikto. Wireshark showed the resulting flood of requests.</p>
-
-    <figure>
-      <img loading="lazy" src="../assets/img/TCPDUMP.png"
-           alt="TCPdump capture on attacker desktop">
-      <figcaption>Figure 7: tcpdump initiated on attacker desktop.</figcaption>
-
-      <img loading="lazy" src="../assets/img/NiktoMass.png"
-           alt="Wireshark capture of Nikto traffic">
-      <figcaption>Figure 8: Wireshark capture of Nikto traffic flood.</figcaption>
-    </figure>
-
-    <h3>Results</h3>
-    <p>
-      The assessment confirmed two open oprts and their services: HTTP on port 80 and HTTPS
-      on port 443. TLS scanning revealed the use of TLS 1.2. Nikto flagged
-      misconfigurations and discovered an exposed login form. Wireshark highlighted how noisy
-      scanning traffic can look from the defender’s perspective.
-    </p>
-
-    <h3>Analysis</h3>
+    <h3>Nikto scan</h3>
+    <pre><code>nikto -h http://192.168.102.128</code></pre>
+    <p>Nikto sent over 8,000 requests in 36 seconds and reported:</p>
     <ul>
-      <li><strong>Demonstrated risk:</strong> Default server configs may allow insecure TLS versions and expose sensitive files.</li>
-      <li><strong>Limitations:</strong> Scanning results can often contain false positives and enterprise environments may trigger alerts or rate-limiting if a flood of requests is executed.</li>
-      <li><strong>Learning outcome:</strong> Gained practice chaining multiple reconnaissance tools and interpreting results from both the attacker and defender side</li>
+      <li>the <code>X-Frame-Options</code> header was missing, leaving the site open to clickjacking</li>
+      <li>the <code>X-Content-Type-Options</code> header wasn't set</li>
+      <li><code>/login.php</code>, which it flagged as an admin login page</li>
+      <li>a <code>wp-config.php</code> backup file. This was a false positive, as the server isn't running WordPress</li>
+    </ul>
+    <figure>
+      <img loading="lazy" src="../assets/img/NiktoScan.png" alt="Nikto scan results">
+      <figcaption>Figure 6: Nikto results, including the missing headers and <code>login.php</code>.</figcaption>
+    </figure>
+
+    <h3>Gobuster</h3>
+    <pre><code>gobuster dir -u http://192.168.102.128 -w /usr/share/wordlists/dirb/common.txt</code></pre>
+    <p>
+      Gobuster only turned up <code>/index.html</code>. The login page isn't in the <code>common.txt</code> wordlist, so it was Nikto that found it, which is a good reminder that brute-forcing is only as good as the wordlist behind it.
+    </p>
+    <figure>
+      <img loading="lazy" src="../assets/img/GobusterScan.png" alt="Gobuster directory scan output">
+      <figcaption>Figure 7: Gobuster finding only <code>/index.html</code>.</figcaption>
+    </figure>
+
+    <h3>The defender's view</h3>
+    <p>To see what all this looks like from the other side, I captured the traffic while re-running Nikto:</p>
+    <pre><code>sudo tcpdump -i eth0 -w scan_cap.pcap</code></pre>
+    <p>
+      I ran the capture on the attacker VM, but the packets are the same ones the webserver receives. In Wireshark the scan is a flood of requests from one IP, most of them for random file names that come back as 404 Not Found.
+    </p>
+    <figure>
+      <img loading="lazy" src="../assets/img/NiktoMass.png" alt="Wireshark capture of the Nikto request flood">
+      <figcaption>Figure 8: Wireshark showing the flood of Nikto requests.</figcaption>
+    </figure>
+    <p>
+      Interestingly, Nikto's requests used a normal Windows browser User-Agent, so it doesn't simply announce itself. Gobuster did though, with <code>gobuster/3.6</code> as its User-Agent (visible in Figure 7).
+    </p>
+    <figure>
+      <img loading="lazy" src="../assets/img/GEThighlight.png" alt="A single Nikto request with a browser User-Agent">
+      <figcaption>Figure 9: A single Nikto request. The User-Agent looks like a normal browser, but the random file names give it away.</figcaption>
+    </figure>
+
+    <h2>Results</h2>
+    <p>
+      The key finding was the TLS configuration: RSA key exchange only, with no forward secrecy. Beyond that, the server had two open ports (HTTP on 80 and HTTPS on 443), was missing two security headers, and had a login page that Nikto found but Gobuster didn't. On the wire, the scanning was very easy to spot.
+    </p>
+
+    <h2>Analysis</h2>
+    <ul>
+      <li><strong>Demonstrated risk:</strong> a TLS configuration without forward secrecy puts all captured traffic at risk if the key ever leaks, and missing headers leave room for clickjacking and MIME sniffing attacks.</li>
+      <li><strong>Limitations:</strong> scanners produce false positives, like the <code>wp-config.php</code> result here, so findings need checking by hand. Running a scan this noisy against a real organisation would likely trigger alerts or rate limiting.</li>
+      <li><strong>Learning outcome:</strong> practised chaining several reconnaissance tools together and reading the results from both the attacker's and the defender's side.</li>
     </ul>
 
-    <h3>Defensive Relevance</h3>
+    <h2>Defensive Relevance</h2>
     <ul>
-      <li>System administrators should always disable legacy TLS protocols and enforce modern cipher suites.</li>
-      <li>IDS/IPS can detect noisy scanner traffic like Nikto as demonstrated; defenders can tune rules to alert on such activity.</li>
+      <li>Only allow forward secret cipher suites (ECDHE), or move to TLS&nbsp;1.3, and add the missing <code>X-Frame-Options</code> and <code>X-Content-Type-Options</code> headers.</li>
+      <li>Scans like this are easy to catch in web server logs: one IP producing hundreds of 404s in seconds, requests for random file names, and tool names such as <code>gobuster</code> in the User-Agent.</li>
+      <li>An IDS or WAF can alert on or rate-limit that pattern automatically.</li>
     </ul>
 
-    <h3>Ethical Context</h3>
-    <p>
-      All scanning was performed against a self-configured lab environment under
-      my control. No external systems were targeted.
-    </p>
+    <h2>Ethical Context</h2>
+    <p>All scanning was against my own lab. No external systems were targeted.</p>
   </section>
 
   <footer class="footer">
