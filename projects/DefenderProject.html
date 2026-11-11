@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Microsoft Defender - Disabled Account Sign-In Investigation</title>
+  <title>Microsoft Defender incident triage | Joseph Watkinson</title>
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Microsoft Defender - Disabled Account Sign-In Investigation" />
+  <meta property="og:title" content="Microsoft Defender incident triage | Joseph Watkinson" />
   <meta property="og:description" content="A cyber security project write-up by Joseph Watkinson." />
   <meta property="og:url" content="https://joseph-watkinson.github.io/joewatkinson.github.io/projects/DefenderProject.html" />
   <meta property="og:image" content="https://joseph-watkinson.github.io/joewatkinson.github.io/assets/img/og-card.png" />
@@ -25,113 +25,95 @@
   </header>
 
  <section class="section">
-    <h1>Microsoft Defender - Disabled Account Sign-In Investigation</h1>
+    <h1>Microsoft Defender incident triage</h1>
 
-    <h3>Objective</h3>
+    <dl class="summary">
+      <div><dt>What I did</dt><dd>Triaged a Medium severity Defender alert for sign-in attempts against disabled accounts, then investigated the IP address behind it.</dd></div>
+      <div><dt>Tools</dt><dd>Microsoft Defender XDR, Microsoft Sentinel</dd></div>
+      <div><dt>Outcome</dt><dd>The evidence pointed towards credential stuffing from a North Korean IP, but without the raw sign-in logs I couldn't confirm it, so I left the verdict open and set out how I'd escalate.</dd></div>
+    </dl>
+
+    <h2>Objective</h2>
     <p>
-      Demonstrate investigation and triage of a Microsoft Defender alert identifying repeated sign-in attempts from a suspicious external IP address targeting disabled accounts. The goal was to determine whether the activity represented malicious user activity (Initial Access / brute-force probing) or a benign authentication misconfiguration.
+      To investigate and triage a Microsoft Defender alert for repeated sign-in attempts from a suspicious external IP address against disabled accounts. The goal was to work out whether the activity was malicious (initial access through credential stuffing or password spraying) or a benign authentication misconfiguration.
     </p>
 
-    <h3>Environment & Threat Model</h3>
-<ul>
-  <li>Platform: Microsoft Defender XDR / Microsoft Sentinel</li>
-  <li>Detection method: Built-in analytics rule: "Sign-ins from IPs that attempt sign-ins to disabled accounts".</li>
-  <li>Alert severity: Medium</li>
-  <li>Observed behaviour: External IP generated multiple authentication attempts against disabled Azure AD accounts, whilst successfully signing into other active accounts.</li>
-  <li>Error code observed: <code>50057</code> (User account is disabled).</li>
-  <li>Entity investigation performed on source IP address (ASN, geolocation, reputation score, correlated alerts).</li>
-  <li>Threat model: activity may represent: credential stuffing or password spraying from a malicious origin</li>
-</ul>
+    <h2>Environment &amp; Threat Model</h2>
+    <ul>
+      <li>Platform: Microsoft Defender XDR / Microsoft Sentinel, using Microsoft's demo alerts.</li>
+      <li>Detection: built-in analytics rule "Sign-ins from IPs that attempt sign-ins to disabled accounts", Medium severity.</li>
+      <li>Error code observed: <code>50057</code> (user account is disabled).</li>
+      <li>Threat model: credential stuffing or password spraying from a malicious source.</li>
+    </ul>
 
+    <h2>Investigation</h2>
 
-    <h3>Methodology & Investigation Process</h3>
-<ul>
-  <li>Alert identified within the Microsoft Defender queue and opened for triage.</li>
-  <li>Status set to In Progress and assigned to analyst to simulate Tier 1 workflow.</li>
-  <li>Reviewed alert metadata, severity, rule description and associated incident timeline.</li>
-  <li>Examined Attack Story and Incident Graph to understand alert relationships and any notable correlations.</li>
-  <li>Pivoted to investigating the source IP address due to nature of alert.</li>
-  <li>Analysed IP data including: ASN, geolocation, reputation score, and correlated alerts.</li>
-  <li>Assessed pattern for indicators of credential stuffing, brute-force or password spraying</li>
-  <li>Documented findings and applied final classification within the incident record.</li>
-</ul>
-
-
+    <h3>Triage in the alert queue</h3>
     <p>
-      The investigation began in the Microsoft Defender alert queue. A Medium severity alert titled “Sign-ins from IPs that attempt sign-ins to disabled accounts” was identified for triage and investigation.
-      The alert category was mapped to Initial Access / Persistence. This stage represents standard Tier 1 monitoring workflow: identifying new alerts, reviewing severity, and determining priority.
+      I started in the Defender alert queue, where a Medium severity alert titled “Sign-ins from IPs that attempt sign-ins to disabled accounts” was waiting to be triaged. Defender mapped it to Initial Access and Persistence. This is the standard Tier 1 starting point: spotting new alerts, checking their severity and deciding what to pick up first.
+    </p>
+    <figure>
+      <img loading="lazy" src="../assets/img/Alert_List.png" alt="Medium severity authentication alert in the Defender queue">
+      <figcaption>Figure 1: Defender alert queue showing the Medium severity authentication alert.</figcaption>
+    </figure>
+
+    <h3>Reviewing the incident</h3>
+    <p>
+      Opening the incident gave me the detection rule logic, a timeline of the activity, the severity and the entity relationships in the Attack Story. I went through the Attack Story and incident graph to see whether anything else was linked to it.
+    </p>
+    <figure>
+      <img loading="lazy" src="../assets/img/Incident_Page.png" alt="Incident overview with timeline and incident graph">
+      <figcaption>Figure 2: Incident overview showing severity, timeline and the incident graph.</figcaption>
+    </figure>
+    <p>
+      I then assigned the incident to myself and set it to In Progress, as a Tier 1 analyst would before digging in.
+    </p>
+    <figure>
+      <img loading="lazy" src="../assets/img/Alert_Assign.png" alt="Manage incident panel with assignment and status">
+      <figcaption>Figure 3: Assigning the incident and setting it to In Progress.</figcaption>
+    </figure>
+
+    <h3>Investigating the source IP</h3>
+    <p>
+      As the whole alert centred on one IP address, that was the obvious thing to pivot to next. The IP details showed:
+    </p>
+    <ul>
+      <li>Geolocation: North Korea</li>
+      <li>ASN: 131279</li>
+      <li>A suspicious reputation score</li>
+      <li>Five active alerts and an incident already linked to the same IP</li>
+    </ul>
+    <figure>
+      <img loading="lazy" src="../assets/img/IP_details.png" alt="IP address page showing geolocation, ASN and correlated alerts">
+      <figcaption>Figure 4: IP address details showing geolocation, ASN and correlated alert activity.</figcaption>
+    </figure>
+
+    <h2>Results</h2>
+    <p>
+      I couldn't reach a firm verdict on this one. Everything I could see pointed towards a malicious credential stuffing attempt: a North Korean IP, a poor reputation score, five correlated alerts and repeated attempts against accounts that had already been disabled. The alert also flagged sign-ins to active accounts from the same IP.
+    </p>
+    <p>
+      The deciding question is whether any of those sign-ins to active accounts actually succeeded. The demo environment didn't give me the raw sign-in logs, so I couldn't check, and I've left the incident undetermined rather than guess.
     </p>
 
-    <figure>
-      <img loading="lazy" src="../assets/img/Alert_List.png" 
-           alt="Medium severity authentication alert">
-      <figcaption>Figure 1: MS Defender SOC queue showing Medium severity authentication alert.</figcaption>
-    </figure>
-   <p>The Incident Overview provided:</p>
-  <ul>
-  <li>Detection rule logic</li>
-  <li>Timeline of activity</li>
-  <li>Incident severity</li>
-  <li>Entity relationships via Attack Story</li>
-  </ul>
+    <h2>Analysis</h2>
+    <ul>
+      <li><strong>Credential stuffing over password spraying:</strong> spraying usually tries one common password across lots of current accounts. Attempts against disabled accounts suggest someone working through an old leaked list of usernames and passwords, without knowing which accounts had since been closed.</li>
+      <li><strong>Risk:</strong> if any of the sign-ins to active accounts succeeded, the attacker has a working account and a foothold in the tenant.</li>
+      <li><strong>Next steps:</strong> if the sign-in logs confirmed a success, I'd escalate straight away, revoke the user's sessions, reset their password, check their MFA and conditional access, and block the IP. If nothing got in, I'd still block the IP and record it as an attempted attack.</li>
+      <li><strong>Limitations:</strong> this was a demo environment, so the raw sign-in data in the 'Observed in organization' tab wasn't available to confirm successful sign-ins or correlate sessions.</li>
+      <li><strong>Learning outcome:</strong> worked through the Tier 1 SOC workflow of alert triage, incident scoping, entity investigation and documenting findings.</li>
+    </ul>
 
-    <figure>
-      <img loading="lazy" src="../assets/img/Incident_Page.png" 
-           alt="Attack severity and timeline context">
-      <figcaption>Figure 2: Incident overview showing attack severity and timeline.</figcaption>
-    </figure>
+    <h2>Defensive Relevance</h2>
+    <ul>
+      <li>MFA and conditional access would stop a leaked password on its own from getting anyone in, and risky sign-in policies can block attempts from high-risk locations like this one.</li>
+      <li>Sign-in attempts against disabled accounts are a useful early warning of credential stuffing, so this rule is worth keeping enabled and tuned.</li>
+      <li>Lockout and rate limiting policies make credential stuffing and password spraying much slower and noisier.</li>
+    </ul>
 
-    <p>
-      After initial triage of the incident, the incident was classified and assigned to an agent.
-    </p>
-
-    <figure>
-      <img loading="lazy" src="../assets/img/Alert_Assign.png" 
-           alt="Incident assignment and classification">
-      <figcaption>Figure 3: Incident assignment and classification after initial triage.</figcaption>
-    </figure>
-
-    <p>
-      The investigation pivoted to the source IP address associated with the authentication attempts due to the nature of the alert.
-    </p>
-   <p> Investigation into the IP address revealed: </p>
-  <ul>
-  <li>Geolocation: North Korea</li>
-  <li>ASN ownership</li>
-  <li>Suspicious reputation score</li>
-  <li>Multiple correlated alerts</li>
-  </ul>
-
-    <figure>
-      <img loading="lazy" src="../assets/img/IP_details.png" 
-           alt="IP address data">
-      <figcaption>Figure 4: IP address data showing geolocation, ASN, reputation, and correlated alert activity.</figcaption>
-    </figure>
-
-    <h3>Analysis</h3>
-<ul>
-  <li>Observed behaviour: A single external IP address generated authentication attempts against one or more disabled accounts (error code <code>50057</code>), whilst successfully signing into active accounts from the same IP address. Behaviour is consistent with password spraying or credential stuffing attacks.</li>
-  <li>Risk: Repeated sign-in attempts from suspicious infrastructure can indicate password spraying / credential stuffing. If successful, this can lead to account compromise and disruption through the disabling of innocent accounts.</li>
-  <li>Contextual indicators: IP data showed suspicious attributes (geolocation, ASN ownership, reputation scoring) and correlated alert activity, increasing likelihood that the activity was not simple routine user behaviour.</li>
-  <li>Next steps in investigation:If data and successful sign-in data further suspicion, the alert would be escalated and the IP address likely blocked from attempting any further sign-ins. </li>
-  <li>Limitations:This investigation was performed in a demo environment and raw sign-in data in the 'Observed in organization' tab was not available for deeper validation (e.g. confirming successful sign-ins or session correlation).</li>
-  <li>Learning outcome:investigated Tier 1 SOC workflow including alert triage, incident scoping, analysis, classification and documentation of findings.</li>
-</ul>
-
-<h3>Defensive Relevance</h3>
-<ul>
-  <li>Enforce strong authentication controls via MFA, conditional access and block high-risk sign-ins where possible.</li>
-  <li>Review and tune detections for authentication anomalies (disabled account sign-in attempts, repeated failures from a single IP, suspicious locations).</li>
-  <li>Implement rate-limiting and lockout policies to reduce the effectiveness of password spraying and credential stuffing attacks.</li>
-  <li>Use IP-based controls where appropriate to block known hostile IPs/ASNs..</li>
-</ul>
-
-<h3>Ethical Context</h3>
-<ul>
-  <li>This investigation was conducted using <strong>Microsoft-provided demo alerts</strong> in a controlled lab environment for educational and portfolio purposes.</li>
-  <li>No real user accounts, external systems, or production tenant resources were targeted or impacted.</li>
-</ul>
-
+    <h2>Ethical Context</h2>
+    <p>Carried out using Microsoft's demo alerts. No real user accounts or production systems were involved.</p>
   </section>
 
   <footer class="footer">
